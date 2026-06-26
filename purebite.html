@@ -1518,7 +1518,68 @@
     </div>
 
     <!-- ==========================================
-         VIEW 3: SUBSCRIPTION INFO
+         VIEW 3: AI MEAL PERSONALIZED (SUBSCRIPTION ONLY)
+         ========================================== -->
+    <div id="view-ai-personalized" class="modal-overlay">
+        <div class="modal-content" style="max-width: 800px; text-align: left; position: relative; max-height: 90vh; overflow-y: auto; padding: 2rem;">
+             <button class="btn-brutalist hover-target"
+                style="position: absolute; top: 10px; left: 10px; padding: 0.5rem 1rem; font-size: 0.8rem;"
+                onclick="flowState.backFromAIPersonalized()">← KEMBALI</button>
+
+            <h2 class="modal-title" style="font-size: 2.5rem; margin-top: 2rem; margin-bottom: 2rem; text-align: center;">AI Meal Personalized</h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; font-family: var(--font-mono);">
+                <div style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">BUDGET (PER HARI):</label>
+                    <select id="pers-budget" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono); font-size: 1.1rem;">
+                        <option value="150000" style="color: black;">Rp150.000</option>
+                        <option value="200000" style="color: black;">Rp200.000</option>
+                        <option value="250000" style="color: black;">Rp250.000</option>
+                        <option value="300000" style="color: black;">Rp300.000+</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">TARGET PROTEIN (g):</label>
+                    <input type="number" id="pers-protein" placeholder="Cth: 60" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">TARGET KALORI (kcal):</label>
+                    <input type="number" id="pers-calories" placeholder="Cth: 1500" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">TARGET LEMAK (g):</label>
+                    <input type="number" id="pers-fat" placeholder="Cth: 50" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">ALERGI:</label>
+                    <input type="text" id="pers-allergies" placeholder="Cth: Kacang, Udang" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">MAKANAN FAVORIT:</label>
+                    <input type="text" id="pers-favorites" placeholder="Cth: Ayam, Ikan" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 700;">MAKANAN TIDAK DISUKAI:</label>
+                    <input type="text" id="pers-dislikes" placeholder="Cth: Pare, Brokoli" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem; font-family: var(--font-mono);">
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; text-align: center;">
+                <button class="btn-brutalist hover-target"
+                    style="background: var(--accent-color); border-color: var(--accent-color); color: white; width: 100%;"
+                    onclick="flowState.generateFromPersonalized()">Generate My Meal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 4: SUBSCRIPTION INFO
          ========================================== -->
     <div id="view-subscription-info" class="modal-overlay">
         <div class="modal-content" style="max-width: 700px; text-align: center; position: relative;">
@@ -1657,16 +1718,31 @@
                         <div
                             style="display: flex; flex-direction: column; gap: 1rem; font-family: var(--font-mono); font-size: 0.8rem;">
                             <div>
-                                <label>BUDGET (Rp):</label>
-                                <input type="number" id="ai-budget"
+                                <label>BUDGET (PER HARI):</label>
+                                <select id="ai-budget" style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;">
+                                    <option value="150000" style="color: black;">Rp150.000</option>
+                                    <option value="200000" style="color: black;">Rp200.000</option>
+                                    <option value="250000" style="color: black;">Rp250.000</option>
+                                    <option value="300000" style="color: black;">Rp300.000+</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>TARGET PROTEIN:</label>
+                                <input type="number" id="ai-protein"
                                     style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
-                                    placeholder="Cth: 50000">
+                                    placeholder="Cth: 60">
                             </div>
                             <div>
                                 <label>TARGET KALORI:</label>
                                 <input type="number" id="ai-calories"
                                     style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
                                     placeholder="Cth: 500">
+                            </div>
+                            <div>
+                                <label>TARGET LEMAK:</label>
+                                <input type="number" id="ai-fat"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: 50">
                             </div>
                             <div>
                                 <label>ALERGI:</label>
@@ -2080,35 +2156,99 @@
 
         const aiPlanner = {
             generate() {
-                const budget = parseInt(document.getElementById('ai-budget').value) || 1000000;
-                const calories = parseInt(document.getElementById('ai-calories').value) || 2000;
+                const budget = parseInt(document.getElementById('ai-budget').value) || 300000;
+                const proteinTarget = parseInt(document.getElementById('ai-protein').value) || 0;
+                const caloriesTarget = parseInt(document.getElementById('ai-calories').value) || 0;
+                const fatTarget = parseInt(document.getElementById('ai-fat').value) || 1000;
+                const allergies = document.getElementById('ai-allergies').value.toLowerCase();
                 const favorites = document.getElementById('ai-favorites').value.toLowerCase();
                 const dislikes = document.getElementById('ai-dislikes').value.toLowerCase();
 
-                const recommendation = {};
-                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
-                    let options = database.filter(item => item.type === type);
+                // Simple rule-based generation
+                const generateBox = (isLunch) => {
+                    const recommendation = {};
+                    ['carb', 'protein', 'veg', 'extra'].forEach(type => {
+                        let options = database.filter(item => item.type === type);
 
-                    // Filter dislikes
-                    if (dislikes) {
-                        options = options.filter(item => !dislikes.split(',').some(d => item.name.toLowerCase().includes(d.trim())));
-                    }
+                        // 1. Budget Rule
+                        if (budget <= 150000) {
+                            options = options.filter(item => item.tags.includes('Rendah Kalori') || item.price <= 20000);
+                        } else if (budget <= 200000) {
+                            options = options.filter(item => item.price <= 35000);
+                        }
 
-                    // Score options
-                    options.sort((a, b) => {
-                        let scoreA = 0, scoreB = 0;
-                        if (favorites && a.name.toLowerCase().includes(favorites)) scoreA += 10;
-                        if (favorites && b.name.toLowerCase().includes(favorites)) scoreB += 10;
-                        // Budget and calorie proximity could be added here
-                        return scoreB - scoreA;
+                        // 2. Allergy & Dislike Rule
+                        if (allergies || dislikes) {
+                            const exclude = (allergies + ',' + dislikes).split(',').map(s => s.trim()).filter(s => s);
+                            options = options.filter(item => !exclude.some(ex => item.name.toLowerCase().includes(ex)));
+                        }
+
+                        // 3. Scoring
+                        options.sort((a, b) => {
+                            let scoreA = 0, scoreB = 0;
+
+                            // Protein Rule
+                            if (proteinTarget > 50) {
+                                if (a.tags.includes('High Protein')) scoreA += 15;
+                                if (b.tags.includes('High Protein')) scoreB += 15;
+                            }
+
+                            // Calories Rule
+                            if (caloriesTarget > 0) {
+                                scoreA -= Math.abs(a.cal - (caloriesTarget / 4)) / 10;
+                                scoreB -= Math.abs(b.cal - (caloriesTarget / 4)) / 10;
+                            }
+
+                            // Fat Rule (Lower fat if target is low)
+                            if (fatTarget < 40) {
+                                scoreA -= a.fat;
+                                scoreB -= b.fat;
+                            }
+
+                            // Favorite Rule
+                            if (favorites) {
+                                const favs = favorites.split(',').map(s => s.trim()).filter(s => s);
+                                if (favs.some(f => a.name.toLowerCase().includes(f))) scoreA += 20;
+                                if (favs.some(f => b.name.toLowerCase().includes(f))) scoreB += 20;
+                            }
+
+                            return scoreB - scoreA;
+                        });
+
+                        if (options.length > 0) recommendation[type] = options[0];
                     });
+                    return recommendation;
+                };
 
-                    if (options.length > 0) recommendation[type] = options[0];
-                });
+                const lunchRec = generateBox(true);
+                const dinnerRec = generateBox(false);
 
-                Object.values(recommendation).forEach(item => builder.selectItem(item.id));
-                alert("AI telah menyusun menu berdasarkan kriteria Anda.");
-                ui.toggleAccordion('ai-meal-planner');
+                // Apply to builder
+                builder.currentBox = 'lunch';
+                builder.state = builder.lunchState;
+                Object.values(lunchRec).forEach(item => builder.selectItem(item.id));
+
+                if (orderWizardState.frequency === 'penuh') {
+                    builder.currentBox = 'dinner';
+                    builder.state = builder.dinnerState;
+                    Object.values(dinnerRec).forEach(item => builder.selectItem(item.id));
+
+                    // Switch back to lunch for view
+                    builder.currentBox = 'lunch';
+                    builder.state = builder.lunchState;
+                }
+
+                builder.updateUI();
+
+                // Ensure correct tab is active visually if in builder
+                const lunchTab = document.querySelector('#builder-tabs .tab:first-child');
+                if (lunchTab) builder.switchBox('lunch', lunchTab);
+
+                if (document.getElementById('view-builder').classList.contains('active')) {
+                    alert("AI telah menyusun menu berdasarkan kriteria Anda.");
+                    const plannerAccordion = document.getElementById('ai-meal-planner');
+                    if (!plannerAccordion.classList.contains('d-none')) ui.toggleAccordion('ai-meal-planner');
+                }
             }
         }
 
@@ -2128,7 +2268,7 @@
                 if (this.commitment === 'satu-kali') {
                     flowState.startBuilder();
                 } else {
-                    flowState.showSubscriptionInfo();
+                    flowState.showAIPersonalized();
                 }
             },
             goBackToStep1() {
@@ -2153,6 +2293,35 @@
                 document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
                 orderWizardState.reset();
             },
+            showAIPersonalized() {
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+                document.getElementById('view-home').classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.add('d-none');
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('view-ai-personalized').classList.add('active');
+                }, 500);
+            },
+            backFromAIPersonalized() {
+                document.getElementById('view-ai-personalized').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.remove('hidden', 'd-none');
+                    document.getElementById('modal-wizard-step-2').classList.add('active');
+                }, 300);
+            },
+            generateFromPersonalized() {
+                // Collect data from personalized form and map to builder's AI planner fields
+                document.getElementById('ai-budget').value = document.getElementById('pers-budget').value;
+                document.getElementById('ai-protein').value = document.getElementById('pers-protein').value;
+                document.getElementById('ai-calories').value = document.getElementById('pers-calories').value;
+                document.getElementById('ai-fat').value = document.getElementById('pers-fat').value;
+                document.getElementById('ai-allergies').value = document.getElementById('pers-allergies').value;
+                document.getElementById('ai-favorites').value = document.getElementById('pers-favorites').value;
+                document.getElementById('ai-dislikes').value = document.getElementById('pers-dislikes').value;
+
+                // Show Subscription Info before going to builder
+                this.showSubscriptionInfo();
+            },
             showSubscriptionInfo() {
                 document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
                 document.getElementById('view-home').classList.add('hidden');
@@ -2165,8 +2334,12 @@
             backFromSubscriptionInfo() {
                 document.getElementById('view-subscription-info').classList.remove('active');
                 setTimeout(() => {
-                    document.getElementById('view-home').classList.remove('hidden', 'd-none');
-                    document.getElementById('modal-wizard-step-2').classList.add('active');
+                    if (orderWizardState.commitment === 'satu-kali') {
+                        document.getElementById('view-home').classList.remove('hidden', 'd-none');
+                        document.getElementById('modal-wizard-step-2').classList.add('active');
+                    } else {
+                        document.getElementById('view-ai-personalized').classList.add('active');
+                    }
                 }, 300);
             },
             backFromBuilder() {
@@ -2208,6 +2381,12 @@
                     document.getElementById('view-builder').classList.remove('d-none');
                     document.getElementById('view-builder').classList.add('active');
                     builder.init();
+
+                    // If subscription, trigger AI Planner generation automatically
+                    if (orderWizardState.commitment !== 'satu-kali') {
+                        aiPlanner.generate();
+                    }
+
                     if (orderWizardState.frequency === 'penuh') {
                         document.getElementById('builder-tabs').classList.remove('d-none');
                     } else {
