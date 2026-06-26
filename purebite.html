@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PureBite | Not Your Typical Catering</title>
+    <style>
+        /* =========================================
+           1. CORE & CSS VARIABLES
+           ========================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300;1,500&family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-primary: #EAE7DC;
+            --text-primary: #1A1A1A;
+            --accent-color: #D34F30;
+            --bg-dark: #1C231F;
+            --text-light: #EAE7DC;
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-display: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        body.dark-mode {
+            --bg-primary: #1C231F;
+            --text-primary: #EAE7DC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+            letter-spacing: 0.02em;
+        }
+
+        ::selection {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* =========================================
+           2. NOISE & CURSOR
+           ========================================= */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            filter: url(#noiseFilter);
+        }
+
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: -5;
+            width: 15px;
+            height: 15px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1), height 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor.expand {
+            width: 80px;
+            height: 80px;
+            background-color: #fff;
+        }
+
+        /* =========================================
+           3. BUTTONS & UTILS
+           ========================================= */
+        .btn-brutalist {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: transparent;
+            color: inherit;
+            border: 2px solid currentColor;
+            padding: 1.2rem 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: inline-block;
+            letter-spacing: 0.1em;
+        }
+
+        .btn-brutalist::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            z-index: -1;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-brutalist:hover {
+            color: var(--bg-primary);
+        }
+
+        .btn-brutalist:hover::before {
+            transform: scaleY(1);
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* =========================================
+           4. HOMEPAGE: HERO & NAV
+           ========================================= */
+        #view-home {
+            width: 100%;
+            transition: opacity 0.5s ease;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+            mix-blend-mode: difference;
+            color: #fff;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 0.8;
+        }
+
+        .nav-info {
+            text-align: right;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .hero {
+            height: 110vh;
+            display: flex;
+            align-items: center;
+            padding: 0 3rem;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: clamp(5rem, 14vw, 14rem);
+            line-height: 0.8;
+            font-weight: 300;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title i {
+            font-style: italic;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-primary);
+        }
+
+        .hero-title .offset {
+            display: block;
+            margin-left: 15vw;
+        }
+
+        .hero-actions {
+            margin-top: 4rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .floating-badge {
+            position: absolute;
+            right: 15%;
+            top: 10%;
+            width: 150px;
+            height: 150px;
+            animation: spin 10s linear infinite;
+            z-index: 3;
+        }
+
+        .floating-badge svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--text-primary);
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hero-img-raw {
+            position: absolute;
+            right: 0%;
+            bottom: 0%;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* =========================================
+           5. HOMEPAGE: MARQUEE & ABOUT
+           ========================================= */
+        .marquee-section {
+            padding: 4rem 0;
+            border-top: 2px solid var(--text-primary);
+            border-bottom: 2px solid var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: -1rem;
+        }
+
+        .marquee-row {
+            white-space: nowrap;
+            display: flex;
+            font-size: 6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .marquee-row span {
+            padding: 0 2rem;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--text-primary);
+        }
+
+        .marquee-row.solid span {
+            color: var(--text-primary);
+            -webkit-text-stroke: 0;
+        }
+
+        .m-left {
+            animation: marquee-l 20s linear infinite;
+        }
+
+        .m-right {
+            animation: marquee-r 20s linear infinite;
+        }
+
+        @keyframes marquee-l {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes marquee-r {
+            0% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .about-section {
+            padding: 10rem 3rem;
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+        }
+
+        .about-section i {
+            font-family: var(--font-serif);
+            font-style: italic;
+            color: var(--accent-color);
+            font-weight: 300;
+        }
+
+        /* =========================================
+           6. HOMEPAGE: GHOST GALLERY & FAV
+           ========================================= */
+        .menu-section {
+            padding: 5rem 3rem 10rem;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .section-header {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5rem;
+            border-bottom: 1px solid var(--text-primary);
+            padding-bottom: 1rem;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 7vw, 7rem);
+            font-style: italic;
+            line-height: 1;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        body:not(.dark-mode) .menu-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item:hover {
+            color: var(--accent-color);
+            transform: translateX(30px);
+        }
+
+        .hover-reveal-img {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 350px;
+            height: 450px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1;
+            transform: translate(-50%, -50%) scale(0.8);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            background-size: cover;
+            background-position: center;
+            border-radius: 200px 200px 0 0;
+        }
+
+        .hover-reveal-img.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 6.1 STACKED CARDS & TESTIMONIALS */
+        .fav-section {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 6rem;
+            padding: 10rem 3rem;
+            min-height: 80vh;
+            align-items: center;
+            border-top: 2px solid var(--text-primary);
+        }
+
+        .fav-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .fav-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+        }
+
+        .fav-food-name {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 6vw, 6.5rem);
+            font-style: italic;
+            line-height: 0.9;
+            text-transform: uppercase;
+            font-weight: 300;
+            transition: opacity 0.3s ease;
+        }
+
+        .fav-quote {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            font-weight: 700;
+            line-height: 1.3;
+            margin-top: 2.5rem;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        .fav-author {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            letter-spacing: 1px;
+            transition: opacity 0.3s ease;
+        }
+
+        .fav-right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 450px;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            user-select: none;
+        }
+
+        .stack-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--text-primary);
+            border-radius: 20px;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--bg-primary);
+            box-shadow: 4px 4px 0px var(--text-primary);
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), z-index 0.6s, opacity 0.3s ease;
+        }
+
+        /* =========================================
+           7. HOMEPAGE: HORIZONTAL SCROLL (BENEFITS)
+           ========================================= */
+        .horizontal-container {
+            height: 300vh;
+            position: relative;
+        }
+
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .h-scroll-inner {
+            display: flex;
+            gap: 5vw;
+            padding: 0 5vw;
+            transition: transform 0.1s linear;
+            will-change: transform;
+        }
+
+        .h-card {
+            min-width: 45vw;
+            height: 60vh;
+            border: 2px solid var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem;
+            background: var(--bg-primary);
+        }
+
+        .h-card h3 {
+            font-size: 4rem;
+            font-weight: 800;
+        }
+
+        .h-card p {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.2;
+        }
+
+        /* =========================================
+           8. HOMEPAGE: HOW TO ORDER & FOOTER CTA
+           ========================================= */
+        .how-it-works {
+            padding: 10rem 3rem;
+            border-top: 2px solid var(--text-primary);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            margin-top: 5rem;
+        }
+
+        .step-card {
+            border-top: 4px solid var(--text-primary);
+            padding-top: 2rem;
+        }
+
+        .step-num {
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .step-card h3 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .step-card p {
+            font-size: 1.1rem;
+            font-family: var(--font-serif);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        footer {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6rem 3rem 2rem;
+            border-top: 2px solid var(--text-primary);
+            text-align: center;
+        }
+
+        .footer-main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .footer-big {
+            font-size: clamp(4rem, 10vw, 12rem);
+            line-height: 0.8;
+            font-weight: 800;
+            letter-spacing: -3px;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+
+        .footer-bottom {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin-top: 5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-socials a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-socials a:hover {
+            color: var(--accent-color);
+        }
+
+        /* =========================================
+           9. MODALS, BUILDER, CHECKOUT, SUCCESS
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            text-align: center;
+            width: 80%;
+        }
+
+        .modal-title {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            font-style: italic;
+            margin-bottom: 4rem;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .choice-card {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4rem 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .choice-card:hover {
+            border-color: var(--accent-color);
+            background: rgba(211, 79, 48, 0.1);
+            transform: translateY(-10px);
+        }
+
+        .choice-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+/* Builder */
+#view-builder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    z-index: 1500;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#view-builder.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.builder-left {
+    flex: 1;
+    border-right: 2px solid var(--text-primary);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ai-prompt-box {
+    border-bottom: 2px solid var(--text-primary);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.ai-prompt-box input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.tray-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1rem;
+    flex-grow: 1;
+    margin-bottom: 2rem;
+}
+
+.tray-slot {
+    border: 1px dashed var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.tray-slot.filled {
+    border-style: solid;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tray-slot.filled:hover .remove-btn {
+    opacity: 1;
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    border-top: 2px solid var(--text-primary);
+    padding-top: 1rem;
+}
+
+.builder-right {
+    flex: 1;
+    padding: 3rem;
+    overflow-y: auto;
+    background: var(--bg-dark);
+    color: var(--text-light);
+}
+
+.catalog-tabs {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 1rem;
+}
+
+.tab {
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.tab.active {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-color);
+}
+
+.tab-large {
+    font-size: 1.4rem;
+    font-weight: 800;
+    flex-grow: 1;
+    text-align: center;
+    border: 2px solid var(--text-light);
+    padding: 1rem !important;
+}
+
+.tab-large.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.tab-large.active::after {
+    display: none;
+}
+
+.catalog-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.filter-pill {
+    border: 1px solid var(--text-light);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+}
+
+.bento-preview-area {
+    position: relative;
+    background: #1a1a1a url('https://raw.githubusercontent.com/jules-software/assets/main/bento-tray-empty.png') no-repeat center center;
+    background-size: cover;
+    border: 8px solid #000;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.preview-layer {
+    position: absolute;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transform: scale(0.8);
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+}
+
+.preview-layer.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Sekat Permanen Positions */
+#preview-layer-carb {
+    top: 10%;
+    left: 5%;
+    width: 55%;
+    height: 80%;
+}
+
+/* Terbesar */
+#preview-layer-protein {
+    top: 10%;
+    left: 65%;
+    width: 30%;
+    height: 40%;
+}
+
+#preview-layer-veg {
+    top: 55%;
+    left: 65%;
+    width: 30%;
+    height: 25%;
+}
+
+#preview-layer-extra {
+    top: 82%;
+    left: 65%;
+    width: 30%;
+    height: 10%;
+    border-radius: 50%;
+}
+
+.item-list {
+    list-style: none;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-style: italic;
+    transition: color 0.3s;
+}
+
+.item-row:hover {
+    color: var(--accent-color);
+    padding-left: 20px;
+}
+
+.item-meta {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-style: normal;
+    opacity: 0.5;
+}
+
+        /* Checkout */
+        #view-checkout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #view-checkout.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .checkout-box {
+            width: 60%;
+            font-family: var(--font-mono);
+        }
+
+        .receipt-header {
+            font-size: 3rem;
+            font-weight: 800;
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed var(--bg-primary);
+            padding-bottom: 1rem;
+        }
+
+        .input-brutal {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--bg-primary);
+            color: var(--bg-primary);
+            font-size: 3rem;
+            font-family: var(--font-display);
+            outline: none;
+            margin-bottom: 2rem;
+        }
+
+        .receipt-list {
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .receipt-list div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .pay-btn {
+            border: 1px solid var(--bg-primary);
+            padding: 1rem 2rem;
+            flex: 1;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pay-btn.selected {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Success View (Updated Styling) */
+        #view-success {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            background-image: radial-gradient(rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+        }
+
+        body.dark-mode #view-success {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+        }
+
+        #view-success.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .success-box {
+            background: var(--bg-primary);
+            border: 2px solid var(--text-primary);
+            padding: 4rem;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 12px 12px 0px var(--text-primary);
+            position: relative;
+        }
+
+        .success-badge {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .success-huge {
+            font-family: var(--font-display);
+            /* Ubah nilai di sini sesuai keinginan */
+            /* Contoh: clamp(2rem, 5vw, 3rem) akan jauh lebih kecil */
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 3rem;
+        }
+
+        .success-huge i {
+            font-family: var(--font-serif);
+            font-weight: 300;
+            text-transform: none;
+            color: var(--accent-color);
+        }
+
+        .success-meta {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            text-align: left;
+            border-top: 2px dashed var(--text-primary);
+            border-bottom: 2px dashed var(--text-primary);
+            padding: 2rem 0;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .meta-note {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            text-align: center;
+            margin-top: 2rem;
+            letter-spacing: 1px;
+        }
+
+        /* Media Queries */
+        @media(max-width: 768px) {
+
+            .cursor,
+            .noise-overlay,
+            .hover-reveal-img,
+            .floating-badge {
+                display: none;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .hero-title {
+                font-size: 4rem;
+            }
+
+            .hero-title .offset {
+                margin-left: 0;
+            }
+
+            .steps-grid,
+            .choice-grid,
+            .tray-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .h-card {
+                min-width: 80vw;
+            }
+
+            .builder-left,
+            .builder-right {
+                width: 100%;
+                min-height: 100vh;
+                flex: none;
+            }
+
+            #view-builder {
+                flex-direction: column;
+                overflow-y: auto;
+                position: relative;
+                height: auto;
+            }
+
+            .checkout-box {
+                width: 90%;
+            }
+
+            .footer-bottom {
+                flex-direction: column-reverse;
+                gap: 1.5rem;
+                text-align: center;
+                padding-bottom: 1rem;
+                display: flex;
+            }
+
+            .footer-socials {
+                gap: 1.5rem;
+                justify-content: center !important;
+            }
+
+            .fav-section {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+                padding: 6rem 1.5rem;
+            }
+
+            .fav-right {
+                height: 380px;
+            }
+
+            .card-stack {
+                width: 260px;
+                height: 340px;
+            }
+
+            .success-box {
+                padding: 2rem;
+                box-shadow: 8px 8px 0px var(--text-primary);
+            }
+
+            .meta-row {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding-bottom: 0.5rem;
+            }
+
+            body.dark-mode .meta-row {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .meta-row:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- SVG NOISE FILTER -->
+    <svg style="display:none;">
+        <filter id="noiseFilter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
+        </filter>
+    </svg>
+    <div class="noise-overlay"></div>
+
+    <!-- CUSTOM CURSOR & REVEAL IMG -->
+    <div class="cursor" id="cursor"></div>
+    <div class="hover-reveal-img" id="reveal-img"></div>
+
+    <!-- ==========================================
+         VIEW 1: LONG-SCROLL HOMEPAGE
+         ========================================== -->
+    <div id="view-home">
+        <nav>
+            <div class="logo hover-target">PureBite✦</div>
+            <div class="nav-info hover-target" style="text-align: left;">
+                STATUS: ONLINE<br>
+                <span style="color: var(--accent-color);">MDN (HQ)</span> / JKT / SBY<br>
+                Scroll Down ↓
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="floating-badge">
+                <svg viewBox="0 0 100 100">
+                    <path id="curve" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+                    <text font-size="12" font-weight="700" letter-spacing="2">
+                        <textPath href="#curve">100% ORGANIC • ZERO PLASTIC • NO BS • </textPath>
+                    </text>
+                </svg>
+            </div>
+            <img src="object.png" class="hero-img-raw" alt="Raw vegetables">
+            <div>
+                <h1 class="hero-title">Raw.<br><span class="offset"><i>Unfiltered.</i></span>Taste.</h1>
+                <div class="hero-actions">
+                    <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Susun Piringmu</button>
+                    <span style="font-family: var(--font-mono); font-size: 0.9rem;">+ AI NUTRITION ASSIST</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="marquee-section">
+            <div class="marquee-row m-left solid">
+                <span>STOP EATING GARBAGE</span><span>STOP EATING GARBAGE</span><span>STOP EATING GARBAGE</span>
+            </div>
+            <div class="marquee-row m-right">
+                <span>EAT REAL FOOD</span><span>EAT REAL FOOD</span><span>EAT REAL FOOD</span><span>EAT REAL FOOD</span>
+            </div>
+        </section>
+
+        <section class="about-section">
+            Bukan makanan kelinci. <i>Kami mengubah cara generasi ini makan.</i> Membunuh stereotip bahwa makanan sehat
+            itu hambar. Kami meretas sistem pertanian lokal untuk menyajikan rasa absolut dengan jejak karbon nol.
+            <i>Sadar. Liar. Otentik.</i>
+        </section>
+
+        <div id="dark-mode-trigger">
+            <section class="fav-section">
+                <div class="fav-left">
+                    <span class="fav-label">// PALING DISUKAI & PENDAPAT MEREKA</span>
+                    <h2 class="fav-food-name" id="fav-food">Charred Aubergine</h2>
+                    <p class="fav-quote" id="fav-quote">"Gila sih, terong bisa berasa kayak steak premium. Bumbunya
+                        meresap sampai ke serat terdalam. PureBite beneran meretas cara kita makan sehat!"</p>
+                    <div class="fav-author" id="fav-author">- Asep, Jakarta</div>
+                </div>
+
+                <div class="fav-right">
+                    <div class="card-stack" id="card-stack">
+                        <div class="stack-card hover-target"
+                            style="background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop');">
+                        </div>
+                        <div class="stack-card hover-target"
+                            style="background-image: url('https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=800&auto=format&fit=crop');">
+                        </div>
+                        <div class="stack-card hover-target"
+                            style="background-image: url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?q=80&w=800&auto=format&fit=crop');">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="horizontal-container" id="horizontal-wrapper">
+            <div class="sticky-wrapper">
+                <div class="h-scroll-inner" id="h-scroll-inner">
+                    <div class="h-card">
+                        <span class="step-num">MANFAAT 01</span>
+                        <h3>Real-Time Macros</h3>
+                        <p>Kalkulator nutrisi absolut. Atur protein, lemak, dan karbohidrat sesuai target harianmu
+                            langsung di layar.</p>
+                    </div>
+                    <div class="h-card">
+                        <span class="step-num">MANFAAT 02</span>
+                        <h3>Eco-Guilt Score</h3>
+                        <p>Setiap menu memiliki skor jejak karbon. Makan enak tanpa merasa bersalah pada bumi. 100%
+                            kemasan kompos.</p>
+                    </div>
+                    <div class="h-card">
+                        <span class="step-num">MANFAAT 03</span>
+                        <h3>AI Assistant</h3>
+                        <p>Cukup ketik tujuan dietmu (cth: "Tinggi protein, rendah gula"), AI kami akan menyusun piring
+                            yang sempurna dalam sedetik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="how-it-works">
+            <div class="section-header">Panduan Memesan</div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <span class="step-num">STEP 01.</span>
+                    <h3>Pilih Komitmen</h3>
+                    <p>Tentukan apakah Kamu ingin mencoba satu kali untuk keesokan harinya, atau langsung berlangganan
+                        rutinitas mingguan.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">STEP 02.</span>
+                    <h3>Kurasi Makananmu</h3>
+                    <p>Masuk ke Interactive Plate Builder. Pilih manual lauk favoritmu, atau biarkan sistem AI kami
+                        mengatur makronutrisi Kami.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">STEP 03.</span>
+                    <h3>Verifikasi & Tunggu</h3>
+                    <p>Masukkan alamat pengiriman, bayar dengan sistem digital (QRIS/Transfer), dan asupan Anda tiba
+                        tanpa sampah plastik.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-main-content">
+                <div class="footer-big">Waktunya<br>Makan Benar.</div>
+                <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Mulai Susun Piring
+                    Anda</button>
+
+                <div class="footer-locations"
+                    style="display: flex; gap: 1.5rem; margin-top: 5rem; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 800px;">
+                    <div class="hover-target"
+                        style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
+                        <div
+                            style="color: var(--accent-color); font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                            [ NODE 01 / HQ ]</div>
+                        <div style="font-size: 1.2rem; font-weight: 800;">MEDAN</div>
+                        <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;"><i
+                                class="fa-solid fa-satellite-dish"></i> LAT 3.5952° N</div>
+                    </div>
+
+                    <div class="hover-target"
+                        style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ NODE 02 ]</div>
+                        <div style="font-size: 1.2rem; font-weight: 800;">JAKARTA</div>
+                        <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;">LAT 6.2088°
+                            S</div>
+                    </div>
+
+                    <div class="hover-target"
+                        style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ NODE 03 ]</div>
+                        <div style="font-size: 1.2rem; font-weight: 800;">SURABAYA</div>
+                        <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;">LAT 7.2504°
+                            S</div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 1.5rem; border-top: 1px dashed rgba(150, 150, 150, 0.3); padding-top: 1.5rem; width: 100%; max-width: 800px; text-align: center; font-family: var(--font-mono); font-size: 0.85rem; text-transform: uppercase;">
+                    <span style="opacity: 0.8;">
+                        <i class="fa-solid fa-tower-broadcast" style="margin-right: 5px;"></i> RADIUS PENGIRIMAN MAKS.
+                        25KM DARI MASING-MASING NODE.
+                    </span><br>
+                    <span
+                        style="color: var(--accent-color); font-weight: 700; display: inline-block; margin-top: 0.5rem; letter-spacing: 1px;">
+                        // SISTEM AKAN MEMVERIFIKASI KODEPOS ANDA SAAT CHECKOUT //
+                    </span>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copyright" style="text-align: left;">© 2026 PureBite Catering.</div>
+                <div class="footer-socials" style="justify-content: center; gap: 2.5rem;">
+                    <a href="mailto:hello@purebite.com" class="hover-target"><i class="fa-regular fa-envelope"
+                            style="margin-right: 6px;"></i> HELLO@PUREBITE.COM</a>
+                    <a href="tel:+628111222333" class="hover-target"><i class="fa-solid fa-phone"
+                            style="margin-right: 6px;"></i> +62 811-1222-333</a>
+                </div>
+                <div class="footer-socials" style="justify-content: flex-end; font-size: 1.2rem; gap: 1.8rem;">
+                    <a href="#" class="hover-target" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover-target" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="hover-target" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==========================================
+         VIEW 2: MODAL WIZARD (STEP 1 & STEP 2)
+         ========================================== -->
+    <div class="modal-overlay" id="modal-wizard-step-1">
+        <div class="modal-content" style="position: relative; max-width: 700px;">
+            <button class="btn-brutalist hover-target"
+                style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
+                onclick="flowState.closeModal()">← KEMBALI KE BERANDA</button>
+
+            <h2 class="modal-title" style="font-size: 3rem; margin-bottom: 2rem;">Tipe Komitmen.</h2>
+            <div class="choice-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
+                <!-- Satu Kali -->
+                <div class="choice-card hover-target" onclick="orderWizardState.setStep1('satu-kali')" 
+                     style="padding: 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h3>Satu Kali</h3>
+                        <p style="font-family: var(--font-mono); margin-top:0.5rem; opacity: 0.8; font-size: 0.9rem;">Uji coba rasa dan kualitas kami untuk pengiriman besok.</p>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-weight: 700;">TRIAL</div>
+                </div>
+                <!-- Mingguan -->
+                <div class="choice-card hover-target" onclick="orderWizardState.setStep1('mingguan')" 
+                     style="padding: 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between; border: 3px solid var(--accent-color);">
+                    <div>
+                        <div style="background: var(--accent-color); color: white; display: inline-block; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">HEMAT 5%</div>
+                        <h3>Mingguan</h3>
+                        <p style="font-family: var(--font-mono); margin-top:0.5rem; opacity: 0.8; font-size: 0.9rem;">Rutinitas sehat selama 7 hari. Cocok untuk awal perubahan.</p>
+                    </div>
+                    <i class="fa-solid fa-calendar-week" style="font-size: 2rem; color: var(--accent-color);"></i>
+                </div>
+                <!-- Bulanan -->
+                <div class="choice-card hover-target" onclick="orderWizardState.setStep1('bulanan')"
+                    style="padding: 2.5rem 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between; background: var(--accent-color); color: #fff; border-color: var(--accent-color); transform: scale(1.02);">
+                    <div>
+                        <div style="background: #fff; color: var(--accent-color); display: inline-block; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">HEMAT 15%</div>
+                        <h3 style="color: #fff;">Bulanan</h3>
+                        <p style="font-family: var(--font-mono); margin-top:0.5rem; color: rgba(255,255,255,0.9); font-size: 0.9rem;">Komitmen penuh transformasi kesehatan total selama 30 hari.</p>
+                    </div>
+                    <i class="fa-solid fa-crown" style="font-size: 2.5rem; color: #fff;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-wizard-step-2">
+        <div class="modal-content" style="position: relative; max-width: 700px;">
+            <button class="btn-brutalist hover-target"
+                style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
+                onclick="orderWizardState.goBackToStep1()">← KEMBALI KE KOMITMEN</button>
+
+            <h2 class="modal-title" style="font-size: 3rem; margin-bottom: 2rem;">Frekuensi Asupan.</h2>
+            <div class="choice-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
+                <!-- Paket Siang -->
+                <div class="choice-card hover-target" onclick="orderWizardState.setStep2('siang')"
+                     style="padding: 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 2rem;">
+                        <i class="fa-solid fa-sun" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        <div>
+                            <h3>Paket Siang</h3>
+                            <p style="font-family: var(--font-mono); margin-top:0.5rem; opacity: 0.8; font-size: 0.9rem;">Satu piring nutrisi seimbang untuk aktivitas siangmu.</p>
+                        </div>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-weight: 700;">1 BOKS</div>
+                </div>
+                <!-- Paket Penuh -->
+                <div class="choice-card hover-target" onclick="orderWizardState.setStep2('penuh')"
+                     style="padding: 2.5rem 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--accent-color); background: rgba(211, 79, 48, 0.05);">
+                    <div style="display: flex; align-items: center; gap: 2rem;">
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+                            <i class="fa-solid fa-sun" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                            <i class="fa-solid fa-moon" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                        </div>
+                        <div>
+                            <h3>Paket Penuh</h3>
+                            <p style="font-family: var(--font-mono); margin-top:0.5rem; opacity: 0.8; font-size: 0.9rem;">Perlindungan nutrisi lengkap 24 jam (Siang & Malam).</p>
+                        </div>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-color);">2 BOKS</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 3: AI CURATION FLOW
+         ========================================== -->
+    <div id="view-ai-form" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px; text-align: left; position: relative;">
+            <button class="btn-brutalist hover-target"
+                style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
+                onclick="flowState.backToStep2()">← KEMBALI</button>
+            <h2 class="modal-title">Kurasi AI.</h2>
+            <div style="display: flex; flex-direction: column; gap: 1.5rem; font-family: var(--font-mono);">
+                <div>
+                    <label>BUDGET (Rp):</label>
+                    <input type="number" id="form-ai-budget" class="input-brutal"
+                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="50000">
+                </div>
+                <div>
+                    <label>TARGET KALORI:</label>
+                    <input type="number" id="form-ai-calories" class="input-brutal"
+                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="500">
+                </div>
+                <div>
+                    <label>MAKANAN FAVORIT:</label>
+                    <input type="text" id="form-ai-favorites" class="input-brutal"
+                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="Ayam, Nasi Merah">
+                </div>
+                <div>
+                    <label>TIDAK DISUKAI:</label>
+                    <input type="text" id="form-ai-dislikes" class="input-brutal"
+                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="Brokoli">
+                </div>
+                <button class="btn-brutalist hover-target" style="border-color: white; color: white;"
+                    onclick="aiFlow.generateCuration()">Generate Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-ai-preview" class="modal-overlay">
+        <div class="modal-content" style="max-width: 900px; position: relative;">
+            <button class="btn-brutalist hover-target"
+                style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
+                onclick="flowState.backToAIForm()">← KEMBALI</button>
+            <h2 class="modal-title">Hasil Kurasi.</h2>
+            <div id="ai-preview-container"
+                style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 3rem;">
+                <!-- Preview boxes will be injected here -->
+            </div>
+            <div style="display: flex; gap: 2rem; justify-content: center;">
+                <button class="btn-brutalist hover-target" style="border-color: white; color: white; font-size: 1rem;"
+                    onclick="aiFlow.editInBuilder()">Edit Manual</button>
+                <button class="btn-brutalist hover-target"
+                    style="background: var(--accent-color); border-color: var(--accent-color); color: white; font-size: 1rem;"
+                    onclick="flowState.startDelivery()">Lanjut Pembayaran</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 4: INTERACTIVE PLATE BUILDER
+         ========================================== -->
+    <div id="view-builder">
+        <div class="builder-left">
+            <div>
+                <button class="btn-brutalist hover-target"
+                    style="padding: 0.5rem 1rem; font-size: 0.8rem; margin-bottom: 2rem;"
+                    onclick="flowState.backFromBuilder()">← KEMBALI KE TAHAP SEBELUMNYA</button>
+                <div class="logo" style="margin-bottom: 1rem;">PureBite✦ BUILDER</div>
+
+                <!-- BUILDER TABS FOR DAY/NIGHT -->
+                <div id="builder-tabs" class="catalog-tabs d-none"
+                    style="margin-bottom: 1.5rem; border: 1px solid var(--text-primary);">
+                    <div class="tab active hover-target" style="flex: 1; text-align: center; padding: 0.8rem;"
+                        onclick="builder.switchBox('lunch', this)">LUNCH BOX</div>
+                    <div class="tab hover-target" style="flex: 1; text-align: center; padding: 0.8rem;"
+                        onclick="builder.switchBox('dinner', this)">DINNER BOX</div>
+                </div>
+
+                <div
+                    style="font-family: var(--font-mono); font-size: 0.7rem; margin-bottom: 0.5rem; opacity: 0.6; text-transform: uppercase;">
+                    Real-time Tray Preview</div>
+                <!-- VISUAL BENTO PREVIEW -->
+                <div class="bento-preview-area" style="margin-bottom: 2rem; width: 100%; aspect-ratio: 16/9;">
+                    <div id="preview-layer-carb" class="preview-layer"></div>
+                    <div id="preview-layer-protein" class="preview-layer"></div>
+                    <div id="preview-layer-veg" class="preview-layer"></div>
+                    <div id="preview-layer-extra" class="preview-layer"></div>
+                </div>
+
+                <div class="ai-prompt-box">
+                    <input type="text" id="ai-input" placeholder="Ketik: 'Menu diet rendah gula dan tinggi protein...'"
+                        class="hover-target">
+                </div>
+            </div>
+            <div class="tray-grid" id="tray-container">
+                <div class="tray-slot" id="slot-carb" data-type="carb">[ KARBOHIDRAT ]</div>
+                <div class="tray-slot" id="slot-protein" data-type="protein">[ PROTEIN ]</div>
+                <div class="tray-slot" id="slot-veg" data-type="veg">[ SAYURAN ]</div>
+                <div class="tray-slot" id="slot-extra" data-type="extra">[ EKSTRA ]</div>
+            </div>
+            <div>
+                <div class="stats-bar"><span>KALORI: <span id="stat-cals">0</span> Kcal</span><span>TOTAL: Rp<span
+                            id="stat-price">0</span></span></div>
+                <button class="btn-brutalist hover-target" style="width: 100%; margin-top: 1rem; font-size: 1rem;"
+                    onclick="flowState.startDelivery()">Lanjut ke Pengiriman</button>
+            </div>
+        </div>
+        <div class="builder-right">
+            <!-- MAIN TABS -->
+            <div class="catalog-tabs main-tabs" style="margin-bottom: 2rem; align-items: stretch;">
+                <div class="tab tab-large active hover-target" onclick="ui.switchMainTab('manual', this)">Pilih Manual
+                </div>
+                <div class="tab tab-large hover-target" onclick="ui.switchMainTab('recommendation', this)"
+                    style="background: rgba(255,255,255,0.05);">Rekomendasi Para Ahli</div>
+            </div>
+
+            <!-- MANUAL BUILDER CONTENT -->
+            <div id="content-manual">
+                <!-- CATEGORY TABS -->
+                <div class="catalog-tabs category-tabs" style="gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <div class="tab active hover-target" onclick="builder.filterCategory('all', this)">Semua</div>
+                    <div class="tab hover-target" onclick="builder.filterCategory('carb', this)">Karbohidrat</div>
+                    <div class="tab hover-target" onclick="builder.filterCategory('protein', this)">Protein</div>
+                    <div class="tab hover-target" onclick="builder.filterCategory('veg', this)">Sayur</div>
+                    <div class="tab hover-target" onclick="builder.filterCategory('extra', this)">Side Dish</div>
+                </div>
+
+                <!-- FILTER ACCORDION -->
+                <div class="accordion-item" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="accordion-header hover-target" onclick="ui.toggleAccordion('filter-makanan')"
+                        style="padding: 1rem; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05);">
+                        <span>FILTER MAKANAN</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div id="filter-makanan" class="accordion-body d-none"
+                        style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                        <div class="filter-grid"
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem;">
+                            <label><input type="checkbox" class="food-filter" value="Vegan"
+                                    onchange="builder.applyFilters()"> Vegan</label>
+                            <label><input type="checkbox" class="food-filter" value="Vegetarian"
+                                    onchange="builder.applyFilters()"> Vegetarian</label>
+                            <label><input type="checkbox" class="food-filter" value="High Protein"
+                                    onchange="builder.applyFilters()"> High Protein</label>
+                            <label><input type="checkbox" class="food-filter" value="Rendah Kalori"
+                                    onchange="builder.applyFilters()"> Rendah Kalori</label>
+                            <label><input type="checkbox" class="food-filter" value="Pedas"
+                                    onchange="builder.applyFilters()"> Pedas</label>
+                            <label><input type="checkbox" class="food-filter" value="Non Pedas"
+                                    onchange="builder.applyFilters()"> Non Pedas</label>
+                            <label><input type="checkbox" class="food-filter" value="Nusantara"
+                                    onchange="builder.applyFilters()"> Nusantara</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI MEAL PLANNER ACCORDION -->
+                <div class="accordion-item" style="margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="accordion-header hover-target" onclick="ui.toggleAccordion('ai-meal-planner')"
+                        style="padding: 1rem; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05);">
+                        <span>AI MEAL PLANNER</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div id="ai-meal-planner" class="accordion-body d-none"
+                        style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.2); text-align: left;">
+                        <div
+                            style="display: flex; flex-direction: column; gap: 1rem; font-family: var(--font-mono); font-size: 0.8rem;">
+                            <div>
+                                <label>BUDGET (Rp):</label>
+                                <input type="number" id="ai-budget"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: 50000">
+                            </div>
+                            <div>
+                                <label>TARGET KALORI:</label>
+                                <input type="number" id="ai-calories"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: 500">
+                            </div>
+                            <div>
+                                <label>ALERGI:</label>
+                                <input type="text" id="ai-allergies"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: Kacang, Telur">
+                            </div>
+                            <div>
+                                <label>MAKANAN FAVORIT:</label>
+                                <input type="text" id="ai-favorites"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: Ayam">
+                            </div>
+                            <div>
+                                <label>MAKANAN TIDAK DISUKAI:</label>
+                                <input type="text" id="ai-dislikes"
+                                    style="width: 100%; background: transparent; border: 1px solid #555; color: white; padding: 5px;"
+                                    placeholder="Cth: Brokoli">
+                            </div>
+                            <button class="btn-brutalist hover-target"
+                                style="padding: 0.5rem; font-size: 0.8rem; border-color: white;"
+                                onclick="aiPlanner.generate()">Generate Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="item-list" id="catalog-list"></ul>
+            </div>
+
+            <!-- RECOMMENDATION CONTENT -->
+            <div id="content-recommendation" class="d-none">
+                <div class="expert-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Nusantara')"
+                        style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+                        <h3>Nusantara</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Rasa autentik rempah pilihan Indonesia.</p>
+                    </div>
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('High Protein')"
+                        style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+                        <h3>High Protein</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Fokus pada pembentukan massa otot.</p>
+                    </div>
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Diet Langsing')"
+                        style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+                        <h3>Diet Langsing</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Rendah kalori namun tetap mengenyangkan.</p>
+                    </div>
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Vegetarian')"
+                        style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+                        <h3>Vegetarian</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Penuh gizi dari sumber nabati pilihan.</p>
+                    </div>
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Balanced Nutrition')"
+                        style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
+                        <h3>Balanced Nutrition</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
+                            Komposisi seimbang untuk energi harian.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 4 & 5: DELIVERY & CHECKOUT
+         ========================================== -->
+    <div id="view-checkout">
+        <button class="btn-brutalist hover-target"
+            style="position: absolute; top: 40px; left: 40px; padding: 0.5rem 1rem; font-size: 0.9rem; border-color: var(--bg-primary); color: var(--bg-primary);"
+            onclick="flowState.backFromCheckout()">← KEMBALI KE PENYUSUNAN</button>
+        <div class="checkout-box" id="checkout-step-1">
+            <div class="receipt-header">Verifikasi Area</div>
+            <p style="margin-bottom: 2rem;">Masukkan Kodepos atau Kecamatan.</p>
+            <input type="text" class="input-brutal hover-target" placeholder="Contoh: 12190" id="zip-input">
+            <button class="btn-brutalist hover-target"
+                style="border-color: var(--bg-primary); color: var(--bg-primary);"
+                onclick="flowState.processCheckout()">Verifikasi & Bayar</button>
+        </div>
+        <div class="checkout-box d-none" id="checkout-step-2">
+            <div class="receipt-header">Tinjauan Akhir</div>
+            <div class="receipt-list">
+                <div><span>Jadwal:</span> <span id="receipt-schedule">Besok (12:00 WIB)</span></div>
+                <div style="margin-bottom: 1.5rem;"><span>Menu:</span> <span id="receipt-menu" style="text-align: right; max-width: 70%; line-height: 1.2;">Custom</span></div>
+                
+                <div style="border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 1rem;">
+                    <span>Subtotal:</span> <span id="receipt-subtotal">Rp0</span>
+                </div>
+                <div id="receipt-discount-row" style="color: #ff9d85;">
+                    <span>Diskon (<span id="receipt-discount-label">0%</span>):</span> <span>- <span id="receipt-discount-amount">Rp0</span></span>
+                </div>
+                <div style="border-top: 2px solid var(--bg-primary); margin-top: 1rem; padding-top: 1rem; font-size: 1.8rem; font-weight: 800;">
+                    <span>TOTAL:</span> <span id="receipt-total">Rp0</span>
+                </div>
+            </div>
+            <p style="margin-bottom: 1rem;">Metode Pembayaran:</p>
+            <div class="payment-methods">
+                <div class="pay-btn selected hover-target">QRIS</div>
+                <div class="pay-btn hover-target">Transfer Bank</div>
+                <div class="pay-btn hover-target">Kartu Kredit</div>
+            </div>
+            <button class="btn-brutalist hover-target"
+                style="border-color: var(--bg-primary); color: var(--bg-primary); width: 100%;"
+                onclick="flowState.finishOrder()">Selesaikan Pembayaran</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 6: SUCCESS CONFIRMATION
+         ========================================== -->
+    <div id="view-success">
+        <div class="success-box">
+            <div class="success-badge">[ TRANSAKSI BERHASIL ]</div>
+            <h1 class="success-huge">Pesanan<br><i>Diterima.</i></h1>
+            <div class="success-meta">
+                <div class="meta-row"><span>ID PESANAN</span> <span id="success-order-id"
+                        style="font-weight: 700; color: var(--accent-color);">-</span></div>
+                <div class="meta-row"><span>STATUS DAPUR</span> <span>MEMPERSIAPKAN...</span></div>
+                <div class="meta-note">STRUK DIGITAL TELAH DIKIRIM KE EMAIL ANDA.</div>
+            </div>
+            <button class="btn-brutalist hover-target" style="width: 100%; font-size: 1.2rem;"
+                onclick="flowState.returnToHome()">Kembali ke Beranda</button>
+        </div>
+    </div>
+
+    <!-- VANILLA JS MAGIC -->
+    <script>
+        // 1. CURSOR & HOVER REVEAL
+        const cursor = document.getElementById('cursor');
+        const revealImg = document.getElementById('reveal-img');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let cursorX = mouseX, cursorY = mouseY;
+        let imgX = mouseX, imgY = mouseY;
+
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+        function renderAnimations() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+
+            imgX += (mouseX - imgX) * 0.08;
+            imgY += (mouseY - imgY) * 0.08;
+            if (revealImg.classList.contains('visible')) {
+                revealImg.style.transform = `translate(calc(-50% + ${imgX}px), calc(-50% + ${imgY}px)) scale(1)`;
+            } else {
+                revealImg.style.transform = `translate(calc(-50% + ${imgX}px), calc(-50% + ${imgY}px)) scale(0.8)`;
+            }
+            requestAnimationFrame(renderAnimations);
+        }
+        if (window.innerWidth > 768) renderAnimations();
+
+        function attachHoverEvents() {
+            document.querySelectorAll('.hover-target').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+            });
+        }
+        attachHoverEvents();
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('mouseenter', (e) => {
+                revealImg.style.backgroundImage = `url(${e.target.getAttribute('data-img')})`;
+                revealImg.classList.add('visible');
+            });
+            item.addEventListener('mouseleave', () => revealImg.classList.remove('visible'));
+        });
+
+        // 2. HORIZONTAL SCROLL
+        const hWrapper = document.getElementById('horizontal-wrapper');
+        const hInner = document.getElementById('h-scroll-inner');
+        window.addEventListener('scroll', () => {
+            if (document.getElementById('view-home').classList.contains('d-none')) return;
+            let offsetTop = hWrapper.offsetTop;
+            let scrollY = window.scrollY;
+            let scrollDistance = scrollY - offsetTop;
+            let wrapperHeight = hWrapper.scrollHeight - window.innerHeight;
+
+            if (scrollDistance >= 0 && scrollDistance <= wrapperHeight) {
+                let progress = scrollDistance / wrapperHeight;
+                hInner.style.transform = `translateX(-${progress * 110}vw)`;
+            }
+        });
+
+        // 3. DARK MODE OBSERVER
+        const darkTrigger = document.getElementById('dark-mode-trigger');
+        const colorObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) document.body.classList.add('dark-mode');
+                else if (entry.boundingClientRect.top > 0) document.body.classList.remove('dark-mode');
+            });
+        }, { threshold: 0.1 });
+        if (darkTrigger) colorObserver.observe(darkTrigger);
+
+        // 4. DATA KATALOG MENU (BUILDER)
+        const database = [
+            { id: 'c1', type: 'carb', name: 'Nasi Merah', cal: 150, price: 15000, tags: ['High Protein', 'Rendah Kalori', 'Nusantara'], img: 'https://placehold.co/600x400/orange/white?text=Nasi+Merah' },
+            { id: 'c2', type: 'carb', name: 'Ubi Panggang', cal: 120, price: 18000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/brown/white?text=Ubi' },
+            { id: 'p1', type: 'protein', name: 'Ayam Sambal', cal: 250, price: 35000, tags: ['High Protein', 'Pedas', 'Nusantara'], img: 'https://placehold.co/600x400/red/white?text=Ayam+Sambal' },
+            { id: 'p2', type: 'protein', name: 'Ayam Teriyaki', cal: 230, price: 35000, tags: ['High Protein', 'Non Pedas'], img: 'https://placehold.co/600x400/darkred/white?text=Ayam+Teriyaki' },
+            { id: 'p3', type: 'protein', name: 'Ikan Dori', cal: 200, price: 40000, tags: ['High Protein', 'Non Pedas'], img: 'https://placehold.co/600x400/lightblue/black?text=Ikan+Dori' },
+            { id: 'p4', type: 'protein', name: 'Tempe', cal: 180, price: 20000, tags: ['Vegan', 'Vegetarian', 'Nusantara'], img: 'https://placehold.co/600x400/gold/black?text=Tempe' },
+            { id: 'p5', type: 'extra', name: 'Tahu', cal: 160, price: 20000, tags: ['Vegan', 'Vegetarian', 'Nusantara'], img: 'https://placehold.co/600x400/lightyellow/black?text=Tahu' },
+            { id: 'v1', type: 'veg', name: 'Brokoli', cal: 50, price: 15000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/green/white?text=Brokoli' },
+            { id: 'v2', type: 'veg', name: 'Wortel', cal: 40, price: 15000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/orange/black?text=Wortel' },
+            { id: 'e1', type: 'extra', name: 'Telur', cal: 70, price: 12000, tags: ['High Protein', 'Vegetarian'], img: 'https://placehold.co/600x400/white/black?text=Telur' },
+            { id: 'e2', type: 'extra', name: 'Saus Pesto', cal: 90, price: 10000, tags: ['Vegan', 'Vegetarian'], img: 'https://placehold.co/600x400/darkgreen/white?text=Pesto' }
+        ];
+
+        const expertRecommendations = {
+            'Nusantara': ['c1', 'p1', 'v2', 'p4'],
+            'High Protein': ['c1', 'p2', 'v1', 'e1'],
+            'Diet Langsing': ['c2', 'p3', 'v1', 'e1'],
+            'Vegetarian': ['c1', 'p4', 'v1', 'p5'],
+            'Balanced Nutrition': ['c1', 'p3', 'v2', 'e1']
+        };
+
+        // 5. BUILDER LOGIC
+        const builder = {
+            lunchState: { carb: null, protein: null, veg: null, extra: null },
+            dinnerState: { carb: null, protein: null, veg: null, extra: null },
+            state: null, // Points to lunchState or dinnerState
+            currentBox: 'lunch',
+            currentCategory: 'all',
+            initialized: false,
+            init() {
+                this.state = this.lunchState;
+                this.renderCatalog();
+
+                if (this.initialized) return;
+                this.initialized = true;
+
+                const aiInput = document.getElementById('ai-input');
+                aiInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        let val = this.value.toLowerCase();
+                        aiInput.value = 'AI Menganalisis Makro...';
+                        setTimeout(() => {
+                            if (val.includes('vegan') || val.includes('sayur')) {
+                                builder.selectItem('c2'); builder.selectItem('p4'); builder.selectItem('v2'); builder.selectItem('e2');
+                            } else {
+                                builder.selectItem('c1'); builder.selectItem('p1'); builder.selectItem('v1'); builder.selectItem('e1');
+                            }
+                            aiInput.value = '';
+                            aiInput.placeholder = 'AI Selesai. Ketik ulang untuk mereset.';
+                        }, 1200);
+                    }
+                });
+            },
+            renderCatalog() {
+                const list = document.getElementById('catalog-list');
+                list.innerHTML = '';
+
+                const activeFilters = Array.from(document.querySelectorAll('.food-filter:checked')).map(cb => cb.value);
+
+                const filteredData = database.filter(item => {
+                    const matchesCategory = this.currentCategory === 'all' || item.type === this.currentCategory;
+                    const matchesFilters = activeFilters.length === 0 || activeFilters.every(f => item.tags.includes(f));
+                    return matchesCategory && matchesFilters;
+                });
+
+                filteredData.forEach(item => {
+                    list.innerHTML += `
+                        <li class="item-row hover-target" onclick="builder.selectItem('${item.id}')">
+                            <span>${item.name} <span class="item-meta">/ ${item.cal}kcal</span></span>
+                            <span class="item-meta">+Rp${item.price.toLocaleString('id-ID')}</span>
+                        </li>`;
+                });
+                attachHoverEvents();
+            },
+            filterCategory(cat, el) {
+                this.currentCategory = cat;
+                document.querySelectorAll('.category-tabs .tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+                this.renderCatalog();
+            },
+            applyFilters() {
+                this.renderCatalog();
+            },
+            switchBox(box, el) {
+                this.currentBox = box;
+                this.state = (box === 'lunch') ? this.lunchState : this.dinnerState;
+
+                document.querySelectorAll('#builder-tabs .tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+
+                this.updateUI();
+                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
+                    this.updatePreview(type, this.state[type] ? this.state[type].img : null);
+                });
+            },
+            selectItem(id) {
+                const item = database.find(i => i.id === id);
+                this.state[item.type] = item;
+                this.updateUI();
+                this.updatePreview(item.type, item.img);
+            },
+            removeItem(type, e) {
+                e.stopPropagation();
+                this.state[type] = null;
+                this.updateUI();
+                this.updatePreview(type, null);
+            },
+            updatePreview(type, imgUrl) {
+                const layer = document.getElementById(`preview-layer-${type}`);
+                if (imgUrl) {
+                    layer.style.backgroundImage = `url('${imgUrl}')`;
+                    layer.classList.add('active');
+                } else {
+                    layer.classList.remove('active');
+                    setTimeout(() => { if (!layer.classList.contains('active')) layer.style.backgroundImage = 'none'; }, 500);
+                }
+            },
+            applyExpert(type) {
+                const ids = expertRecommendations[type];
+                ids.forEach(id => this.selectItem(id));
+                ui.switchMainTab('manual', document.querySelector('.main-tabs .tab:first-child'));
+            },
+            updateUI() {
+                let totalCal = 0; let totalPrice = 0;
+
+                // Calculate for BOTH lunch and dinner if applicable
+                const calc = (s) => {
+                    ['carb', 'protein', 'veg', 'extra'].forEach(t => {
+                        if (s[t]) { totalCal += s[t].cal; totalPrice += s[t].price; }
+                    });
+                };
+                calc(this.lunchState);
+                calc(this.dinnerState);
+
+                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
+                    const slot = document.getElementById(`slot-${type}`);
+                    const item = this.state[type];
+                    if (item) {
+                        slot.classList.add('filled');
+                        slot.innerHTML = `${item.name}<br><span style="font-size:0.8em">${item.cal}cal</span> <span class="remove-btn hover-target" onclick="builder.removeItem('${type}', event)">×</span>`;
+                        totalCal += item.cal; totalPrice += item.price;
+                    } else {
+                        slot.classList.remove('filled');
+                        const labels = { carb: 'KARBOHIDRAT', protein: 'PROTEIN', veg: 'SAYURAN', extra: 'SIDE DISH' };
+                        slot.innerHTML = `[ ${labels[type]} ]`;
+                    }
+                });
+                document.getElementById('stat-cals').innerText = totalCal;
+                document.getElementById('stat-price').innerText = totalPrice.toLocaleString('id-ID');
+                attachHoverEvents();
+            }
+        };
+
+        const ui = {
+            switchMainTab(tab, el) {
+                document.querySelectorAll('.main-tabs .tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+                if (tab === 'manual') {
+                    document.getElementById('content-manual').classList.remove('d-none');
+                    document.getElementById('content-recommendation').classList.add('d-none');
+                } else {
+                    document.getElementById('content-manual').classList.add('d-none');
+                    document.getElementById('content-recommendation').classList.remove('d-none');
+                }
+            },
+            toggleAccordion(id) {
+                const body = document.getElementById(id);
+                const icon = body.previousElementSibling.querySelector('i');
+                body.classList.toggle('d-none');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
+        };
+
+        const aiPlanner = {
+            generate() {
+                const budget = parseInt(document.getElementById('ai-budget').value) || 1000000;
+                const calories = parseInt(document.getElementById('ai-calories').value) || 2000;
+                const favorites = document.getElementById('ai-favorites').value.toLowerCase();
+                const dislikes = document.getElementById('ai-dislikes').value.toLowerCase();
+
+                const recommendation = {};
+                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
+                    let options = database.filter(item => item.type === type);
+
+                    // Filter dislikes
+                    if (dislikes) {
+                        options = options.filter(item => !dislikes.split(',').some(d => item.name.toLowerCase().includes(d.trim())));
+                    }
+
+                    // Score options
+                    options.sort((a, b) => {
+                        let scoreA = 0, scoreB = 0;
+                        if (favorites && a.name.toLowerCase().includes(favorites)) scoreA += 10;
+                        if (favorites && b.name.toLowerCase().includes(favorites)) scoreB += 10;
+                        // Budget and calorie proximity could be added here
+                        return scoreB - scoreA;
+                    });
+
+                    if (options.length > 0) recommendation[type] = options[0];
+                });
+
+                Object.values(recommendation).forEach(item => builder.selectItem(item.id));
+                alert("AI telah menyusun menu berdasarkan kriteria Anda.");
+                ui.toggleAccordion('ai-meal-planner');
+            }
+        }
+
+        // 6. WIZARD STATE MANAGEMENT (MULTI-STEP)
+        const orderWizardState = {
+            commitment: null,
+            frequency: null,
+            setStep1(value) {
+                this.commitment = value;
+                document.getElementById('modal-wizard-step-1').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('modal-wizard-step-2').classList.add('active');
+                }, 300);
+            },
+            setStep2(value) {
+                this.frequency = value;
+                if (this.commitment === 'satu-kali') {
+                    flowState.startBuilder();
+                } else {
+                    flowState.startAIFlow();
+                }
+            },
+            goBackToStep1() {
+                this.commitment = null;
+                document.getElementById('modal-wizard-step-2').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('modal-wizard-step-1').classList.add('active');
+                }, 300);
+            },
+            reset() {
+                this.commitment = null;
+                this.frequency = null;
+            }
+        };
+
+        // 7. AI FLOW MANAGEMENT
+        const aiFlow = {
+            curationResults: { lunch: null, dinner: null },
+            generateCuration() {
+                const budget = parseInt(document.getElementById('form-ai-budget').value) || 50000;
+                const calories = parseInt(document.getElementById('form-ai-calories').value) || 500;
+                const favs = document.getElementById('form-ai-favorites').value;
+                const dislikes = document.getElementById('form-ai-dislikes').value;
+
+                this.curationResults.lunch = this.simulateAI(favs, dislikes);
+                if (orderWizardState.frequency === 'penuh') {
+                    this.curationResults.dinner = this.simulateAI(favs, dislikes);
+                }
+
+                document.getElementById('view-ai-form').classList.remove('active');
+                this.renderPreview();
+                setTimeout(() => {
+                    document.getElementById('view-ai-preview').classList.add('active');
+                }, 300);
+            },
+            simulateAI(favs, dislikes) {
+                const result = {};
+                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
+                    let opts = database.filter(i => i.type === type);
+                    if (dislikes) opts = opts.filter(i => !dislikes.toLowerCase().includes(i.name.toLowerCase()));
+                    if (favs) {
+                        const top = opts.find(i => favs.toLowerCase().includes(i.name.toLowerCase()));
+                        if (top) { result[type] = top; return; }
+                    }
+                    result[type] = opts[Math.floor(Math.random() * opts.length)];
+                });
+                return result;
+            },
+            renderPreview() {
+                const container = document.getElementById('ai-preview-container');
+                container.innerHTML = '';
+
+                const renderBox = (title, data) => {
+                    let itemsHtml = Object.values(data).map(i => `<li>${i.name}</li>`).join('');
+                    return `
+                        <div class="choice-card" style="flex: 1; text-align: left; padding: 2rem; border-color: white;">
+                            <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--accent-color);">${title}</h3>
+                            <ul style="font-family: var(--font-mono); font-size: 0.9rem; list-style: none;">${itemsHtml}</ul>
+                        </div>
+                    `;
+                };
+
+                container.innerHTML += renderBox('LUNCH BOX', this.curationResults.lunch);
+                if (this.curationResults.dinner) {
+                    container.innerHTML += renderBox('DINNER BOX', this.curationResults.dinner);
+                }
+            },
+            editInBuilder() {
+                document.getElementById('view-ai-preview').classList.remove('active');
+
+                // Assign curation results to builder states
+                builder.lunchState = { ...this.curationResults.lunch };
+                if (this.curationResults.dinner) {
+                    builder.dinnerState = { ...this.curationResults.dinner };
+                } else {
+                    builder.dinnerState = { carb: null, protein: null, veg: null, extra: null };
+                }
+
+                builder.state = builder.lunchState; // Reset to lunch view
+                flowState.startBuilder(true);
+            }
+        };
+
+        // 8. SPA FLOW STATE MANAGEMENT
+        const flowState = {
+            openModal() {
+                document.getElementById('modal-wizard-step-1').classList.add('active');
+            },
+            closeModal() {
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+                orderWizardState.reset();
+            },
+            backToStep2() {
+                document.getElementById('view-ai-form').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.remove('hidden', 'd-none');
+                    document.getElementById('modal-wizard-step-2').classList.add('active');
+                }, 300);
+            },
+            backToAIForm() {
+                document.getElementById('view-ai-preview').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('view-ai-form').classList.add('active');
+                }, 300);
+            },
+            backFromBuilder() {
+                document.getElementById('view-builder').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.remove('hidden', 'd-none');
+                    if (orderWizardState.commitment === 'satu-kali') {
+                        document.getElementById('modal-wizard-step-2').classList.add('active');
+                    } else {
+                        document.getElementById('view-ai-preview').classList.add('active');
+                    }
+                }, 300);
+            },
+            backFromCheckout() {
+                if (!document.getElementById('checkout-step-2').classList.contains('d-none')) {
+                    // If in step 2 of checkout, go back to step 1
+                    document.getElementById('checkout-step-2').classList.add('d-none');
+                    document.getElementById('checkout-step-1').classList.remove('d-none');
+                } else {
+                    // Go back to builder
+                    document.getElementById('view-checkout').classList.remove('active');
+                    setTimeout(() => {
+                        document.getElementById('view-checkout').classList.add('d-none');
+                        document.getElementById('view-builder').classList.remove('d-none');
+                        document.getElementById('view-builder').classList.add('active');
+                    }, 300);
+                }
+            },
+            startAIFlow() {
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+                document.getElementById('view-home').classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.add('d-none');
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('view-ai-form').classList.add('active');
+                }, 500);
+            },
+            startBuilder(skipHomeHide = false) {
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+
+                if (!skipHomeHide) document.getElementById('view-home').classList.add('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.add('d-none');
+                    document.body.classList.remove('dark-mode');
+                    window.scrollTo(0, 0);
+
+                    document.getElementById('view-builder').classList.remove('d-none');
+                    document.getElementById('view-builder').classList.add('active');
+                    builder.init();
+                    if (orderWizardState.frequency === 'penuh') {
+                        document.getElementById('builder-tabs').classList.remove('d-none');
+                    } else {
+                        document.getElementById('builder-tabs').classList.add('d-none');
+                    }
+                }, 500);
+            },
+            startDelivery() {
+                const check = (s) => s.carb && s.protein && s.veg;
+                let valid = check(builder.lunchState);
+                if (orderWizardState.frequency === 'penuh') valid = valid && check(builder.dinnerState);
+
+                if (!valid) {
+                    alert("Sistem Mencegah: Mohon lengkapi minimum Karbo, Protein, dan Sayuran (di kedua boks jika paket penuh)."); return;
+                }
+
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+                document.getElementById('view-builder').classList.remove('active');
+
+                setTimeout(() => {
+                    document.getElementById('view-builder').classList.add('d-none');
+                    document.getElementById('view-checkout').classList.remove('d-none');
+                    document.getElementById('view-checkout').classList.add('active');
+                }, 500);
+            },
+            processCheckout() {
+                const zip = document.getElementById('zip-input').value;
+                if (zip.length < 3) { alert('Sistem Mencegah: Masukkan kode area yang valid.'); return; }
+
+                const getMenu = (s) => Object.values(s).filter(i => i).map(i => i.name).join(', ');
+                let menuText = getMenu(builder.lunchState);
+                if (orderWizardState.frequency === 'penuh') {
+                    menuText = "LUNCH: " + menuText + " | DINNER: " + getMenu(builder.dinnerState);
+                }
+                document.getElementById('receipt-menu').innerText = menuText;
+
+                // Price Logic
+                const basePriceStr = document.getElementById('stat-price').innerText.replace(/\./g, '');
+                const basePrice = parseInt(basePriceStr);
+                
+                let discountPercent = 0;
+                if (orderWizardState.commitment === 'mingguan') {
+                    discountPercent = 5;
+                    document.getElementById('receipt-schedule').innerText = "Mingguan (Mulai Besok)";
+                } else if (orderWizardState.commitment === 'bulanan') {
+                    discountPercent = 15;
+                    document.getElementById('receipt-schedule').innerText = "Bulanan (Mulai Besok)";
+                } else {
+                    document.getElementById('receipt-schedule').innerText = "Besok (12:00 WIB)";
+                }
+
+                const discountAmount = Math.floor(basePrice * (discountPercent / 100));
+                const totalPrice = basePrice - discountAmount;
+
+                document.getElementById('receipt-subtotal').innerText = 'Rp' + basePrice.toLocaleString('id-ID');
+                document.getElementById('receipt-discount-label').innerText = discountPercent + '%';
+                document.getElementById('receipt-discount-amount').innerText = 'Rp' + discountAmount.toLocaleString('id-ID');
+                document.getElementById('receipt-total').innerText = 'Rp' + totalPrice.toLocaleString('id-ID');
+
+                if (discountPercent === 0) {
+                    document.getElementById('receipt-discount-row').classList.add('d-none');
+                } else {
+                    document.getElementById('receipt-discount-row').classList.remove('d-none');
+                }
+
+                document.getElementById('checkout-step-1').classList.add('d-none');
+                document.getElementById('checkout-step-2').classList.remove('d-none');
+            },
+            finishOrder() {
+                const orderId = 'PB-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+                document.getElementById('success-order-id').innerText = orderId;
+
+                document.getElementById('view-checkout').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('view-checkout').classList.add('d-none');
+                    document.getElementById('view-success').classList.add('active');
+                }, 500);
+            },
+            returnToHome() {
+                document.getElementById('view-success').classList.remove('active');
+
+                setTimeout(() => {
+                    // Reset visibility of all major views
+                    document.getElementById('view-builder').classList.add('d-none');
+                    document.getElementById('view-builder').classList.remove('active');
+                    document.getElementById('view-checkout').classList.add('d-none');
+                    document.getElementById('view-checkout').classList.remove('active');
+                    document.getElementById('view-ai-form').classList.remove('active');
+                    document.getElementById('view-ai-preview').classList.remove('active');
+                    
+                    document.getElementById('checkout-step-1').classList.remove('d-none');
+                    document.getElementById('checkout-step-2').classList.add('d-none');
+                    document.getElementById('zip-input').value = '';
+
+                    builder.lunchState = { carb: null, protein: null, veg: null, extra: null };
+                    builder.dinnerState = { carb: null, protein: null, veg: null, extra: null };
+                    builder.state = builder.lunchState;
+                    builder.currentBox = 'lunch';
+
+                    builder.updateUI();
+                    orderWizardState.reset();
+
+                    document.getElementById('view-home').classList.remove('d-none', 'hidden');
+                    window.scrollTo(0, 0);
+                }, 500);
+            }
+        };
+
+        // 8. EVENT LISTENER PEMBAYARAN & FAVORITES
+        document.querySelectorAll('.pay-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+                e.target.classList.add('selected');
+            });
+        });
+
+        const favData = [
+            {
+                name: "Charred Aubergine",
+                quote: '"Gila sih, terong bisa berasa kayak steak premium. Bumbunya meresap sampai ke serat terdalam. PureBite beneran meretas cara kita makan sehat!"',
+                author: "- Asep, Jakarta"
+            },
+            {
+                name: "Smoked Beetroot Tartare",
+                quote: '"Warna dan teksturnya dapet banget. Gak nyangka buah bit bisa se-smokey dan se-fresh ini. Menu wajib kalau lagi pengen asupan bersih tapi tetep nagih."',
+                author: "- Nia, Batam"
+            },
+            {
+                name: "Oyster Mushroom Steak",
+                quote: '"Juicy banget! Teksturnya meaty dan sausnya bener-bener brutal enaknya. Earthy, bold, stand out banget dibanding katering sehat hambar konvensional."',
+                author: "- Budi, Medan"
+            }
+        ];
+
+        let currentFavIndex = 0;
+
+        function updateCardStack() {
+            const cards = document.querySelectorAll('.stack-card');
+            cards.forEach((card, idx) => {
+                let relIndex = (idx - currentFavIndex + cards.length) % cards.length;
+
+                if (relIndex === 0) {
+                    card.style.transform = `translate(0px, 0px) rotate(0deg)`;
+                    card.style.zIndex = "3";
+                    card.style.opacity = "1";
+                    card.style.pointerEvents = "auto";
+                } else if (relIndex === 1) {
+                    card.style.transform = `translate(15px, 15px) rotate(3deg)`;
+                    card.style.zIndex = "2";
+                    card.style.opacity = "0.85";
+                    card.style.pointerEvents = "none";
+                } else if (relIndex === 2) {
+                    card.style.transform = `translate(30px, 30px) rotate(6deg)`;
+                    card.style.zIndex = "1";
+                    card.style.opacity = "0.6";
+                    card.style.pointerEvents = "none";
+                } else {
+                    card.style.transform = `translate(45px, 45px)`;
+                    card.style.zIndex = "0";
+                    card.style.opacity = "0";
+                    card.style.pointerEvents = "none";
+                }
+            });
+
+            const txtName = document.getElementById('fav-food');
+            const txtQuote = document.getElementById('fav-quote');
+            const txtAuthor = document.getElementById('fav-author');
+
+            if (txtName && txtQuote && txtAuthor) {
+                [txtName, txtQuote, txtAuthor].forEach(el => el.style.opacity = '0');
+
+                setTimeout(() => {
+                    txtName.textContent = favData[currentFavIndex].name;
+                    txtQuote.textContent = favData[currentFavIndex].quote;
+                    txtAuthor.textContent = favData[currentFavIndex].author;
+                    [txtName, txtQuote, txtAuthor].forEach(el => el.style.opacity = '1');
+                }, 300);
+            }
+        }
+
+        const cardStackElem = document.getElementById('card-stack');
+        if (cardStackElem) {
+            cardStackElem.addEventListener('click', () => {
+                currentFavIndex = (currentFavIndex + 1) % favData.length;
+                updateCardStack();
+            });
+            updateCardStack();
+        }
+    </script>
+</body>
+
+</html>
