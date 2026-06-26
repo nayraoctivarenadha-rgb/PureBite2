@@ -1458,7 +1458,7 @@
                 <div class="choice-card hover-target" onclick="orderWizardState.setStep1('mingguan')" 
                      style="padding: 2rem; text-align: left; display: flex; align-items: center; justify-content: space-between; border: 3px solid var(--accent-color);">
                     <div>
-                        <div style="background: var(--accent-color); color: white; display: inline-block; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">HEMAT 5%</div>
+                        <div style="background: var(--accent-color); color: white; display: inline-block; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">HEMAT 10%</div>
                         <h3>Mingguan</h3>
                         <p style="font-family: var(--font-mono); margin-top:0.5rem; opacity: 0.8; font-size: 0.9rem;">Rutinitas sehat selama 7 hari. Cocok untuk awal perubahan.</p>
                     </div>
@@ -1758,6 +1758,8 @@
         <div class="checkout-box d-none" id="checkout-step-2">
             <div class="receipt-header">Tinjauan Akhir</div>
             <div class="receipt-list">
+                <div id="receipt-commitment-row" class="d-none"><span>Jenis Langganan:</span> <span id="receipt-commitment">-</span></div>
+                <div id="receipt-package-row" class="d-none"><span>Jenis Paket:</span> <span id="receipt-package">-</span></div>
                 <div><span>Jadwal:</span> <span id="receipt-schedule">Besok (12:00 WIB)</span></div>
                 <div style="margin-bottom: 1rem;"><span>Menu:</span> <span id="receipt-menu" style="text-align: right; max-width: 70%; line-height: 1.2;">Custom</span></div>
                 <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.5rem;">
@@ -1879,6 +1881,19 @@
         if (darkTrigger) colorObserver.observe(darkTrigger);
 
         // 4. DATA KATALOG MENU (BUILDER)
+        const SUBSCRIPTION_CONFIG = {
+            'mingguan': {
+                'siang': 250000,
+                'penuh': 600000,
+                'discount': 10 // %
+            },
+            'bulanan': {
+                'siang': 900000,
+                'penuh': 2200000,
+                'discount': 15 // %
+            }
+        };
+
         const database = [
             { id: 'c1', type: 'carb', name: 'Nasi Merah', cal: 150, protein: 4, fat: 1, carb: 33, co2: 0.5, price: 15000, tags: ['High Protein', 'Rendah Kalori', 'Nusantara'], img: 'https://placehold.co/600x400/orange/white?text=Nasi+Merah' },
             { id: 'c2', type: 'carb', name: 'Ubi Panggang', cal: 120, protein: 2, fat: 0, carb: 28, co2: 0.3, price: 18000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/brown/white?text=Ubi' },
@@ -1912,6 +1927,7 @@
             init() {
                 this.state = this.lunchState;
                 this.renderCatalog();
+                this.updateUI();
 
                 if (this.initialized) return;
                 this.initialized = true;
@@ -2044,15 +2060,23 @@
                     if (item) {
                         slot.classList.add('filled');
                         slot.innerHTML = `${item.name}<br><span style="font-size:0.8em">${item.cal}cal</span> <span class="remove-btn hover-target" onclick="builder.removeItem('${type}', event)">×</span>`;
-                        totalCal += item.cal; totalPrice += item.price;
                     } else {
                         slot.classList.remove('filled');
                         const labels = { carb: 'KARBOHIDRAT', protein: 'PROTEIN', veg: 'SAYURAN', extra: 'SIDE DISH' };
                         slot.innerHTML = `[ ${labels[type]} ]`;
                     }
                 });
+
+                let displayPrice = totalPrice;
+                if (orderWizardState.commitment !== 'satu-kali') {
+                    const config = SUBSCRIPTION_CONFIG[orderWizardState.commitment];
+                    if (config) {
+                        displayPrice = config[orderWizardState.frequency];
+                    }
+                }
+
                 document.getElementById('stat-cals').innerText = totalCal;
-                document.getElementById('stat-price').innerText = totalPrice.toLocaleString('id-ID');
+                document.getElementById('stat-price').innerText = displayPrice.toLocaleString('id-ID');
                 attachHoverEvents();
             }
         };
@@ -2264,24 +2288,36 @@
                 else reward.classList.add('d-none');
 
                 // Price Logic
-                const dailyPriceStr = document.getElementById('stat-price').innerText.replace(/\./g, '');
-                let dailyPrice = parseInt(dailyPriceStr);
-                
-                let multiplier = 1;
+                let subtotal = 0;
                 let discountPercent = 0;
-                if (orderWizardState.commitment === 'mingguan') {
-                    multiplier = 7;
-                    discountPercent = 5;
-                    document.getElementById('receipt-schedule').innerText = "Mingguan (Mulai Besok)";
-                } else if (orderWizardState.commitment === 'bulanan') {
-                    multiplier = 30;
-                    discountPercent = 15;
-                    document.getElementById('receipt-schedule').innerText = "Bulanan (Mulai Besok)";
-                } else {
+                let commitment = orderWizardState.commitment;
+                let frequency = orderWizardState.frequency;
+
+                if (commitment === 'satu-kali') {
+                    const dailyPriceStr = document.getElementById('stat-price').innerText.replace(/\./g, '');
+                    let dailyPrice = parseInt(dailyPriceStr);
+                    subtotal = dailyPrice;
+                    discountPercent = 0;
                     document.getElementById('receipt-schedule').innerText = "Besok (12:00 WIB)";
+
+                    document.getElementById('receipt-commitment-row').classList.add('d-none');
+                    document.getElementById('receipt-package-row').classList.add('d-none');
+                } else {
+                    const config = SUBSCRIPTION_CONFIG[commitment];
+                    subtotal = config[frequency];
+                    discountPercent = config.discount;
+
+                    const labelCommitment = commitment.charAt(0).toUpperCase() + commitment.slice(1);
+                    const labelPackage = frequency === 'siang' ? 'Paket Siang' : 'Paket Penuh';
+
+                    document.getElementById('receipt-commitment').innerText = labelCommitment;
+                    document.getElementById('receipt-package').innerText = labelPackage;
+                    document.getElementById('receipt-schedule').innerText = labelCommitment + " (Mulai Besok)";
+
+                    document.getElementById('receipt-commitment-row').classList.remove('d-none');
+                    document.getElementById('receipt-package-row').classList.remove('d-none');
                 }
 
-                const subtotal = dailyPrice * multiplier;
                 const discountAmount = Math.floor(subtotal * (discountPercent / 100));
                 const totalPrice = subtotal - discountAmount;
 
