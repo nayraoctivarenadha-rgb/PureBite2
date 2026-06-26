@@ -1518,58 +1518,22 @@
     </div>
 
     <!-- ==========================================
-         VIEW 3: AI CURATION FLOW
+         VIEW 3: SUBSCRIPTION INFO
          ========================================== -->
-    <div id="view-ai-form" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px; text-align: left; position: relative;">
+    <div id="view-subscription-info" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px; text-align: center; position: relative;">
             <button class="btn-brutalist hover-target"
                 style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
-                onclick="flowState.backToStep2()">← KEMBALI</button>
-            <h2 class="modal-title">Kurasi AI.</h2>
-            <div style="display: flex; flex-direction: column; gap: 1.5rem; font-family: var(--font-mono);">
-                <div>
-                    <label>BUDGET (Rp):</label>
-                    <input type="number" id="form-ai-budget" class="input-brutal"
-                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="50000">
-                </div>
-                <div>
-                    <label>TARGET KALORI:</label>
-                    <input type="number" id="form-ai-calories" class="input-brutal"
-                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="500">
-                </div>
-                <div>
-                    <label>MAKANAN FAVORIT:</label>
-                    <input type="text" id="form-ai-favorites" class="input-brutal"
-                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="Ayam, Nasi Merah">
-                </div>
-                <div>
-                    <label>TIDAK DISUKAI:</label>
-                    <input type="text" id="form-ai-dislikes" class="input-brutal"
-                        style="font-size: 1.5rem; border-color: white; color: white;" placeholder="Brokoli">
-                </div>
-                <button class="btn-brutalist hover-target" style="border-color: white; color: white;"
-                    onclick="aiFlow.generateCuration()">Generate Plan</button>
-            </div>
-        </div>
-    </div>
+                onclick="flowState.backFromSubscriptionInfo()">← KEMBALI</button>
 
-    <div id="view-ai-preview" class="modal-overlay">
-        <div class="modal-content" style="max-width: 900px; position: relative;">
-            <button class="btn-brutalist hover-target"
-                style="position: absolute; top: -60px; left: 0; padding: 0.5rem 1rem; font-size: 0.9rem;"
-                onclick="flowState.backToAIForm()">← KEMBALI</button>
-            <h2 class="modal-title">Hasil Kurasi.</h2>
-            <div id="ai-preview-container"
-                style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 2rem;">
-                <!-- Preview boxes will be injected here -->
-            </div>
-            <div id="ai-subscription-note" class="d-none" style="font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 2rem; opacity: 0.8; color: var(--accent-color);">
-                ✦ VARIAN MENU UNTUK HARI-HARI BERIKUTNYA AKAN DIKIRIMKAN MELALUI EMAIL KHUSUS BERLANGGANAN.
-            </div>
-            <div style="display: flex; gap: 2rem; justify-content: center;">
+            <h2 class="modal-title" style="font-size: clamp(1.5rem, 4vw, 2.5rem); line-height: 1.2; font-style: normal; font-family: var(--font-display); font-weight: 800; text-transform: uppercase;">
+                ✦ VARIAN MENU UNTUK HARI-HARI BERIKUTNYA AKAN DIKIRIMKAN MELALUI EMAIL
+            </h2>
+
+            <div style="margin-top: 3rem;">
                 <button class="btn-brutalist hover-target"
-                    style="background: var(--accent-color); border-color: var(--accent-color); color: white; font-size: 1rem;"
-                    onclick="aiFlow.proceedToPayment()">Lanjut Pembayaran</button>
+                    style="background: var(--accent-color); border-color: var(--accent-color); color: white;"
+                    onclick="flowState.startBuilder()">Lanjut Susun Piring Hari Pertama</button>
             </div>
         </div>
     </div>
@@ -2164,7 +2128,7 @@
                 if (this.commitment === 'satu-kali') {
                     flowState.startBuilder();
                 } else {
-                    flowState.startAIFlow();
+                    flowState.showSubscriptionInfo();
                 }
             },
             goBackToStep1() {
@@ -2180,102 +2144,7 @@
             }
         };
 
-        // 7. AI FLOW MANAGEMENT
-        const aiFlow = {
-            curationResults: { lunch: null, dinner: null },
-            generateCuration() {
-                const budget = parseInt(document.getElementById('form-ai-budget').value) || 50000;
-                const calories = parseInt(document.getElementById('form-ai-calories').value) || 500;
-                const favs = document.getElementById('form-ai-favorites').value;
-                const dislikes = document.getElementById('form-ai-dislikes').value;
-
-                this.curationResults.lunch = this.simulateAI(favs, dislikes);
-                if (orderWizardState.frequency === 'penuh') {
-                    this.curationResults.dinner = this.simulateAI(favs, dislikes);
-                }
-
-                document.getElementById('view-ai-form').classList.remove('active');
-                this.renderPreview();
-                setTimeout(() => {
-                    document.getElementById('view-ai-preview').classList.add('active');
-                }, 300);
-            },
-            simulateAI(favs, dislikes) {
-                const result = {};
-                ['carb', 'protein', 'veg', 'extra'].forEach(type => {
-                    let opts = database.filter(i => i.type === type);
-                    if (dislikes) opts = opts.filter(i => !dislikes.toLowerCase().includes(i.name.toLowerCase()));
-                    if (favs) {
-                        const top = opts.find(i => favs.toLowerCase().includes(i.name.toLowerCase()));
-                        if (top) { result[type] = top; return; }
-                    }
-                    result[type] = opts[Math.floor(Math.random() * opts.length)];
-                });
-                return result;
-            },
-            renderPreview() {
-                const container = document.getElementById('ai-preview-container');
-                container.innerHTML = '';
-
-                const renderBox = (title, data) => {
-                    let itemsHtml = Object.values(data).map(i => `<li>${i.name}</li>`).join('');
-                    return `
-                        <div class="choice-card" style="flex: 1; text-align: left; padding: 2rem; border-color: white;">
-                            <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--accent-color);">${title}</h3>
-                            <ul style="font-family: var(--font-mono); font-size: 0.9rem; list-style: none;">${itemsHtml}</ul>
-                        </div>
-                    `;
-                };
-
-                container.innerHTML += renderBox('LUNCH BOX', this.curationResults.lunch);
-                if (this.curationResults.dinner) {
-                    container.innerHTML += renderBox('DINNER BOX', this.curationResults.dinner);
-                }
-
-                // Handle Subscription specifics
-                const note = document.getElementById('ai-subscription-note');
-                if (orderWizardState.commitment !== 'satu-kali') {
-                    note.classList.remove('d-none');
-                } else {
-                    note.classList.add('d-none');
-                }
-            },
-            editInBuilder() {
-                document.getElementById('view-ai-preview').classList.remove('active');
-
-                // Assign curation results to builder states
-                builder.lunchState = { ...this.curationResults.lunch };
-                if (this.curationResults.dinner) {
-                    builder.dinnerState = { ...this.curationResults.dinner };
-                } else {
-                    builder.dinnerState = { carb: null, protein: null, veg: null, extra: null };
-                }
-
-                builder.state = builder.lunchState; // Reset to lunch view
-                flowState.startBuilder(true);
-            },
-            proceedToPayment() {
-                // Apply curation results to builder states for final price calculation
-                builder.lunchState = { ...this.curationResults.lunch };
-                if (this.curationResults.dinner) {
-                    builder.dinnerState = { ...this.curationResults.dinner };
-                } else {
-                    builder.dinnerState = { carb: null, protein: null, veg: null, extra: null };
-                }
-
-                // Ensure builder is initialized for stats calculation and UI consistency
-                if (!builder.initialized) builder.init();
-                builder.state = builder.lunchState;
-                builder.updateUI();
-
-                document.getElementById('view-ai-preview').classList.remove('active');
-                setTimeout(() => {
-                    flowState.startDelivery();
-                }, 300);
-            }
-        };
-
-        // 8. SPA FLOW STATE MANAGEMENT
+        // 7. SPA FLOW STATE MANAGEMENT
         const flowState = {
             openModal() {
                 document.getElementById('modal-wizard-step-1').classList.add('active');
@@ -2284,17 +2153,20 @@
                 document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
                 orderWizardState.reset();
             },
-            backToStep2() {
-                document.getElementById('view-ai-form').classList.remove('active');
+            showSubscriptionInfo() {
+                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+                document.getElementById('view-home').classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('view-home').classList.add('d-none');
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('view-subscription-info').classList.add('active');
+                }, 500);
+            },
+            backFromSubscriptionInfo() {
+                document.getElementById('view-subscription-info').classList.remove('active');
                 setTimeout(() => {
                     document.getElementById('view-home').classList.remove('hidden', 'd-none');
                     document.getElementById('modal-wizard-step-2').classList.add('active');
-                }, 300);
-            },
-            backToAIForm() {
-                document.getElementById('view-ai-preview').classList.remove('active');
-                setTimeout(() => {
-                    document.getElementById('view-ai-form').classList.add('active');
                 }, 300);
             },
             backFromBuilder() {
@@ -2304,7 +2176,7 @@
                     if (orderWizardState.commitment === 'satu-kali') {
                         document.getElementById('modal-wizard-step-2').classList.add('active');
                     } else {
-                        document.getElementById('view-ai-preview').classList.add('active');
+                        document.getElementById('view-subscription-info').classList.add('active');
                     }
                 }, 300);
             },
@@ -2314,28 +2186,14 @@
                     document.getElementById('checkout-step-2').classList.add('d-none');
                     document.getElementById('checkout-step-1').classList.remove('d-none');
                 } else {
-                    // Go back to builder or AI preview
+                    // Go back to builder
                     document.getElementById('view-checkout').classList.remove('active');
                     setTimeout(() => {
                         document.getElementById('view-checkout').classList.add('d-none');
-                        if (orderWizardState.commitment === 'satu-kali') {
-                            document.getElementById('view-builder').classList.remove('d-none');
-                            document.getElementById('view-builder').classList.add('active');
-                        } else {
-                            document.getElementById('view-ai-preview').classList.remove('d-none');
-                            document.getElementById('view-ai-preview').classList.add('active');
-                        }
+                        document.getElementById('view-builder').classList.remove('d-none');
+                        document.getElementById('view-builder').classList.add('active');
                     }, 300);
                 }
-            },
-            startAIFlow() {
-                document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
-                document.getElementById('view-home').classList.add('hidden');
-                setTimeout(() => {
-                    document.getElementById('view-home').classList.add('d-none');
-                    document.body.classList.remove('dark-mode');
-                    document.getElementById('view-ai-form').classList.add('active');
-                }, 500);
             },
             startBuilder(skipHomeHide = false) {
                 document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
@@ -2462,8 +2320,7 @@
                     document.getElementById('view-builder').classList.remove('active');
                     document.getElementById('view-checkout').classList.add('d-none');
                     document.getElementById('view-checkout').classList.remove('active');
-                    document.getElementById('view-ai-form').classList.remove('active');
-                    document.getElementById('view-ai-preview').classList.remove('active');
+                    document.getElementById('view-subscription-info').classList.remove('active');
                     
                     document.getElementById('checkout-step-1').classList.remove('d-none');
                     document.getElementById('checkout-step-2').classList.add('d-none');
