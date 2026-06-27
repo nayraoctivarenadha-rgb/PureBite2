@@ -478,8 +478,35 @@
         /* =========================================
            7. HOMEPAGE: HORIZONTAL SCROLL (BENEFITS)
            ========================================= */
+        .benefits-intro {
+            padding: 10rem 3rem 5rem;
+            text-align: center;
+            border-top: 2px solid var(--text-primary);
+        }
+
+        .benefits-intro h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .benefits-intro p {
+            font-family: var(--font-mono);
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            max-width: 700px;
+            margin: 0 auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
         .horizontal-container {
-            height: 300vh;
+            height: 500vh;
             position: relative;
         }
 
@@ -502,25 +529,39 @@
 
         .h-card {
             min-width: 45vw;
-            height: 60vh;
+            height: 65vh;
             border: 2px solid var(--text-primary);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 3rem;
+            justify-content: flex-start;
+            padding: 3.5rem;
             background: var(--bg-primary);
+            transition: background-color 0.3s;
+        }
+
+        .h-card .step-num {
+            margin-bottom: 2rem;
         }
 
         .h-card h3 {
-            font-size: 4rem;
+            font-size: clamp(2.2rem, 4vw, 3.2rem);
             font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            line-height: 1.1;
         }
 
         .h-card p {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            font-style: italic;
-            line-height: 1.2;
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 1.2vw, 1.15rem);
+            line-height: 1.7;
+            font-style: normal;
+            font-weight: 400;
+            color: rgba(26, 26, 26, 0.8);
+        }
+
+        body.dark-mode .h-card p {
+            color: rgba(234, 231, 220, 0.8);
         }
 
         /* =========================================
@@ -1320,26 +1361,38 @@
             </section>
         </div>
 
+        <section class="benefits-intro">
+            <h2>Why Choose Us</h2>
+            <p>Discover why our healthy catering service offers a smarter, more personalized, and eco-friendly dining experience.</p>
+        </section>
+
         <div class="horizontal-container" id="horizontal-wrapper">
             <div class="sticky-wrapper">
                 <div class="h-scroll-inner" id="h-scroll-inner">
                     <div class="h-card">
                         <span class="step-num">MANFAAT 01</span>
-                        <h3>Real-Time Macros</h3>
-                        <p>Kalkulator nutrisi absolut. Atur protein, lemak, dan karbohidrat sesuai target harianmu
-                            langsung di layar.</p>
+                        <h3>Healthy & Nutrition-Focused Meals</h3>
+                        <p>Menu dirancang berdasarkan prinsip gizi seimbang sebagai konsep katering sehat untuk membantu memenuhi kebutuhan nutrisi harian.</p>
                     </div>
                     <div class="h-card">
                         <span class="step-num">MANFAAT 02</span>
-                        <h3>Eco-Guilt Score</h3>
-                        <p>Setiap menu memiliki skor jejak karbon. Makan enak tanpa merasa bersalah pada bumi. 100%
-                            kemasan kompos.</p>
+                        <h3>AI Meal Planner</h3>
+                        <p>Dapatkan rekomendasi menu berdasarkan budget, target nutrisi, alergi, makanan favorit, dan makanan yang tidak disukai sehingga proses memilih menu menjadi lebih cepat dan personal.</p>
                     </div>
                     <div class="h-card">
                         <span class="step-num">MANFAAT 03</span>
-                        <h3>AI Assistant</h3>
-                        <p>Cukup ketik tujuan dietmu (cth: "Tinggi protein, rendah gula"), AI kami akan menyusun piring
-                            yang sempurna dalam sedetik.</p>
+                        <h3>Eco-Friendly Packaging</h3>
+                        <p>Menggunakan kemasan berbahan sugarcane bagasse (serat tebu) sebagai alternatif yang membantu mengurangi penggunaan plastik sekali pakai.</p>
+                    </div>
+                    <div class="h-card">
+                        <span class="step-num">MANFAAT 04</span>
+                        <h3>Free Delivery & Low-Emission Concept</h3>
+                        <p>Nikmati gratis ongkos kirim dengan konsep pengiriman menggunakan kendaraan listrik sebagai bagian dari komitmen terhadap keberlanjutan dan pengurangan emisi karbon.</p>
+                    </div>
+                    <div class="h-card">
+                        <span class="step-num">MANFAAT 05</span>
+                        <h3>Flexible Subscription</h3>
+                        <p>Pilih pembelian satu kali, langganan mingguan, atau bulanan dengan menu yang dipersonalisasi agar lebih praktis dan sesuai kebutuhan.</p>
                     </div>
                 </div>
             </div>
@@ -1940,7 +1993,7 @@
 
             if (scrollDistance >= 0 && scrollDistance <= wrapperHeight) {
                 let progress = scrollDistance / wrapperHeight;
-                hInner.style.transform = `translateX(-${progress * 110}vw)`;
+                hInner.style.transform = `translateX(-${progress * 210}vw)`;
             }
         });
 
