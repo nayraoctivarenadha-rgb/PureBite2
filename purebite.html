@@ -11,12 +11,22 @@
            ========================================= */
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300;1,500&family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap');
 
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+
         :root {
             --bg-primary: #EAE7DC;
             --text-primary: #1A1A1A;
             --accent-color: #D34F30;
             --bg-dark: #1C231F;
             --text-light: #EAE7DC;
+
+            /* Eco accent — sage, lightness-matched to --accent-color so it reads
+               equally well on cream and on dark-olive surfaces */
+            --accent-eco: #6B9071;
+            --accent-eco-rgb: 107, 144, 113;
 
             --font-serif: 'Cormorant Garamond', serif;
             --font-display: 'Syne', sans-serif;
@@ -183,6 +193,37 @@
             letter-spacing: 1px;
         }
 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-link {
+            color: inherit;
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 0.2rem 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.25s ease, opacity 0.25s ease;
+        }
+
+        .nav-link:hover {
+            border-bottom-color: currentColor;
+            opacity: 0.75;
+        }
+
+        .nav-sep {
+            opacity: 0.35;
+            margin: 0 0.6rem;
+            font-size: 0.65rem;
+        }
+
         .hero {
             height: 110vh;
             display: flex;
@@ -193,7 +234,7 @@
 
         .hero-title {
             font-family: var(--font-serif);
-            font-size: clamp(5rem, 14vw, 14rem);
+            font-size: clamp(1rem, 10vw, 10rem);
             line-height: 0.8;
             font-weight: 300;
             z-index: 2;
@@ -208,7 +249,7 @@
 
         .hero-title .offset {
             display: block;
-            margin-left: 15vw;
+            margin-left: 5vw;
         }
 
         .hero-actions {
@@ -312,19 +353,42 @@
         }
 
         .about-section {
-            padding: 10rem 3rem;
-            font-size: clamp(1.8rem, 4vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.3;
-            text-transform: uppercase;
-            letter-spacing: -0.01em;
+            padding: 8rem 3rem 10rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
         }
 
-        .about-section i {
-            font-family: var(--font-serif);
-            font-style: italic;
+        .about-tag {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
             color: var(--accent-color);
-            font-weight: 300;
+        }
+
+        .about-lead {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 800;
+            line-height: 1.0;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            padding-left: 2rem;
+            border-left: 4px solid var(--accent-color);
+            max-width: 18ch;
+        }
+
+        .about-body {
+            font-family: var(--font-display);
+            font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+            font-weight: 400;
+            line-height: 1.9;
+            max-width: 62ch;
+            padding-left: calc(2rem + 4px);
+            text-transform: none;
+            letter-spacing: 0.02em;
+            opacity: 0.65;
         }
 
         /* =========================================
@@ -412,9 +476,9 @@
 
         .fav-label {
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             margin-bottom: 2rem;
             color: var(--accent-color);
         }
@@ -479,7 +543,7 @@
            7. HOMEPAGE: HORIZONTAL SCROLL (BENEFITS)
            ========================================= */
         .horizontal-container {
-            height: 300vh;
+            height: 500vh; /* Increased for 5 cards */
             position: relative;
         }
 
@@ -489,80 +553,373 @@
             height: 100vh;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            gap: 4rem
+        }
+
+        .benefits-header {
+            text-align: center;
+            max-width: 80%;
+            z-index: 10;
+        }
+
+        .benefits-header h2 {
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .benefits-header p {
+            font-family: var(--font-mono);
+            font-size: clamp(0.75rem, 1.1vw, 1rem);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.4;
         }
 
         .h-scroll-inner {
             display: flex;
-            gap: 5vw;
-            padding: 0 5vw;
+            gap: 3vw;
+            padding: 0 10vw;
             transition: transform 0.1s linear;
             will-change: transform;
+            align-items: stretch;
+            align-self: flex-start;
         }
 
         .h-card {
-            min-width: 45vw;
-            height: 60vh;
-            border: 2px solid var(--text-primary);
+            min-width: 35vw;
+            height: 50vh;
+            border: 3px solid var(--text-primary);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 3rem;
+            justify-content: flex-start;
+            padding: 2rem;
             background: var(--bg-primary);
+            transition: transform 0.3s ease;
+            box-shadow: 8px 8px 0px var(--text-primary);
+            overflow: hidden;
+        }
+
+        .h-card .step-num {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
         }
 
         .h-card h3 {
-            font-size: 4rem;
+            font-size: clamp(1.3rem, 2.2vw, 2rem);
             font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
         }
 
         .h-card p {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            font-style: italic;
-            line-height: 1.2;
+            font-family: var(--font-display);
+            font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+            font-weight: 400;
+            line-height: 1.5;
+            opacity: 0.9;
         }
 
         /* =========================================
-           8. HOMEPAGE: HOW TO ORDER & FOOTER CTA
+           8. HOMEPAGE: HOW TO ORDER (REDESIGNED) & FOOTER CTA
            ========================================= */
         .how-it-works {
-            padding: 10rem 3rem;
+            padding: 10rem 3rem 8rem;
             border-top: 2px solid var(--text-primary);
         }
 
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 3rem;
-            margin-top: 5rem;
+        /* ── Stacked header ── */
+        .hiw-header-grid {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 5rem;
+            padding-bottom: 5rem;
+            border-bottom: 1px solid var(--text-primary);
         }
 
-        .step-card {
-            border-top: 4px solid var(--text-primary);
-            padding-top: 2rem;
-        }
-
-        .step-num {
+        .hiw-eyebrow {
             font-family: var(--font-mono);
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
+            font-size: 0.78rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
             display: block;
         }
 
-        .step-card h3 {
-            font-size: 2.5rem;
-            text-transform: uppercase;
+        .how-it-works .section-header {
+            font-size: clamp(2.2rem, 4vw, 4.5rem);
             font-weight: 800;
-            margin-bottom: 1rem;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
         }
 
-        .step-card p {
-            font-size: 1.1rem;
+        .hiw-subtitle-block {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 3rem;
+            margin-top: 1.75rem;
+        }
+
+        .how-it-works-subtitle {
+            font-family: var(--font-mono);
+            font-size: clamp(0.72rem, 1.05vw, 0.9rem);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.6;
+            margin-top: 0;
+            max-width: 520px;
+            line-height: 1.8;
+        }
+
+        .hiw-method-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .hiw-method-count::before {
+            content: '';
+            display: inline-block;
+            width: 36px;
+            height: 1px;
+            background: var(--accent-color);
+            flex-shrink: 0;
+        }
+
+        /* ── Accordion ── */
+        .accordion-list { margin-top: 0; }
+
+        .accordion-item { border-top: 2px solid var(--text-primary); }
+        .accordion-item:last-child { border-bottom: 2px solid var(--text-primary); }
+
+        .accordion-trigger {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-family: inherit;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3rem 0;
+            text-align: left;
+            gap: 2rem;
+            transition: none;
+        }
+
+        .accordion-trigger-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex: 1;
+        }
+
+        /* Ghost serif index number on trigger */
+        .hiw-acc-index {
             font-family: var(--font-serif);
+            font-size: clamp(2rem, 3vw, 3.2rem);
             font-style: italic;
-            line-height: 1.6;
+            font-weight: 300;
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--text-primary);
+            flex-shrink: 0;
+            width: 65px;
+            transition: color 0.35s ease, -webkit-text-stroke-color 0.35s ease;
+        }
+
+        .accordion-item.open .hiw-acc-index,
+        .accordion-trigger:hover .hiw-acc-index {
+            color: var(--accent-color);
+            -webkit-text-stroke-color: var(--accent-color);
+        }
+
+        .hiw-acc-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .hiw-acc-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-color);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .accordion-item.open .hiw-acc-label,
+        .accordion-trigger:hover .hiw-acc-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accordion-emoji { display: none; }
+
+        .accordion-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 2.5vw, 2.4rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .accordion-trigger:hover .accordion-title,
+        .accordion-item.open .accordion-title {
+            color: var(--text-primary);
+        }
+
+        .accordion-icon {
+            font-family: var(--font-mono);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--accent-color);
+            transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .accordion-item.open .accordion-icon { transform: rotate(45deg); }
+
+        .accordion-body {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.55s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .accordion-item.open .accordion-body { grid-template-rows: 1fr; }
+        .accordion-body-inner { overflow: hidden; }
+
+        /* ── Step items — editorial grid layout ── */
+        .steps-list {
+            padding: 0.5rem 0 4.5rem;
+            position: relative;
+        }
+
+        .steps-list::before { display: none; }
+
+        .order-step {
+            display: grid;
+            grid-template-columns: 170px 1fr;
+            align-items: start;
+            padding: 3rem 0;
+            position: relative;
+        }
+
+        .order-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--text-primary);
+            opacity: 0.1;
+        }
+
+        /* Step number → huge ghost serif italic */
+        .step-badge {
+            width: auto;
+            height: auto;
+            border-radius: 0;
+            border: none;
+            background: transparent;
+            font-family: var(--font-serif);
+            font-size: clamp(5rem, 7.5vw, 7.5rem);
+            font-style: italic;
+            font-weight: 300;
+            line-height: 0.8;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--text-primary);
+            display: block;
+            opacity: 0.22;
+            letter-spacing: -3px;
+            padding-top: 0.25rem;
+            transition: color 0.4s ease, -webkit-text-stroke-color 0.4s ease, opacity 0.4s ease;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .order-step:hover .step-badge {
+            color: var(--accent-color);
+            -webkit-text-stroke-color: var(--accent-color);
+            background: transparent;
+            opacity: 1;
+        }
+
+        /* Step content */
+        .step-content {
+            padding-top: 0.35rem;
+            padding-left: 3rem;
+            position: relative;
+        }
+
+        .step-content::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6rem;
+            bottom: 0.6rem;
+            width: 1px;
+            background: var(--text-primary);
+            opacity: 0.15;
+            transition: opacity 0.4s ease;
+        }
+
+        .order-step:hover .step-content::before {
+            opacity: 0.45;
+        }
+
+        .step-content h4 {
+            font-family: var(--font-display);
+            font-size: clamp(0.85rem, 1.1vw, 1rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.8rem;
+        }
+
+        .step-content p {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.7;
+            opacity: 0.72;
+        }
+
+        .step-content p strong {
+            font-style: normal;
+            font-weight: 700;
+            color: var(--accent-color);
         }
 
         footer {
@@ -1129,13 +1486,150 @@
             letter-spacing: 1px;
         }
 
+        /* =========================================
+           10. ECO & BRAND ACCENT SYSTEM
+           (Healthy / Personalized / Eco-Friendly)
+           ========================================= */
+
+        /* Hero kicker — the 3 brand pillars, visible within the first
+           seconds of landing on the page */
+        .hero-eyebrow {
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .hero-eyebrow .pillar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .hero-eyebrow .pillar i {
+            font-size: 0.85em;
+        }
+
+        .hero-eyebrow .pillar.personalized {
+            color: var(--text-primary);
+            opacity: 0.65;
+        }
+
+        .hero-eyebrow .pillar.eco {
+            color: var(--accent-eco);
+        }
+
+        .hero-eyebrow .sep {
+            opacity: 0.3;
+            font-size: 0.65rem;
+        }
+
+        /* Reusable eco badge / pill — mirrors the existing .filter-pill shape
+           language but carries the sustainability color */
+        .eco-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--accent-eco);
+            border: 1px solid rgba(var(--accent-eco-rgb), 0.45);
+            background: rgba(var(--accent-eco-rgb), 0.08);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .eco-tag i {
+            font-size: 0.9em;
+        }
+
+        /* Pillar kicker on benefit cards — ties each card back to one of the
+           three brand pillars via color + icon, on top of the existing
+           step-num/heading hierarchy */
+        .h-card .pillar-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .h-card .pillar-kicker i {
+            font-size: 0.85em;
+        }
+
+        .h-card.pillar-healthy .pillar-kicker,
+        .h-card.pillar-healthy .step-num {
+            color: var(--accent-color);
+        }
+
+        .h-card.pillar-eco .pillar-kicker,
+        .h-card.pillar-eco .step-num {
+            color: var(--accent-eco);
+        }
+
+        .h-card.pillar-personalized .pillar-kicker,
+        .h-card.pillar-personalized .step-num {
+            color: var(--text-primary);
+            opacity: 0.8;
+        }
+
+        /* Inline copy emphasis — colors the 3 pillar words already present
+           in the About copy, without adding new text */
+        .hl-healthy {
+            color: var(--accent-color);
+        }
+
+        .hl-eco {
+            color: var(--accent-eco);
+        }
+
+        .hl-personalized {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* Builder packaging note + success-view closing note */
+        .success-eco-note {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--accent-eco);
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: none;
+        }
+
         /* Media Queries */
         @media(max-width: 768px) {
 
             .cursor,
             .noise-overlay,
             .hover-reveal-img,
-            .floating-badge {
+            .floating-badge,
+            .nav-links {
                 display: none;
             }
 
@@ -1145,6 +1639,16 @@
 
             .hero-title {
                 font-size: 4rem;
+            }
+
+            .hero-eyebrow {
+                font-size: 0.62rem;
+                gap: 0.45rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .hero-eyebrow .sep {
+                display: none;
             }
 
             .hero-title .offset {
@@ -1159,6 +1663,13 @@
 
             .h-card {
                 min-width: 80vw;
+                height: auto;
+                min-height: 40vh;
+                padding: 1.5rem;
+            }
+
+            .benefits-header h2 {
+                font-size: 3rem;
             }
 
             .builder-left,
@@ -1228,6 +1739,13 @@
                 border-bottom: none;
                 padding-bottom: 0;
             }
+
+            .accordion-title { font-size: 1.2rem; }
+            .accordion-trigger { padding: 1.8rem 0; }
+            .step-badge { width: 40px; height: 40px; font-size: 0.75rem; }
+            .steps-list::before { left: 19px; }
+            .order-step { gap: 1.25rem; }
+            .how-it-works { padding: 6rem 1.5rem; }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -1252,7 +1770,18 @@
          ========================================== -->
     <div id="view-home">
         <nav>
-            <div class="logo hover-target">PureBite✦</div>
+            <a href="#hero" class="logo hover-target" style="text-decoration:none; color:inherit;">PureBite✦</a>
+            <div class="nav-links">
+                <span class="nav-sep">//</span>
+                <a href="#section-tentang" class="nav-link hover-target">01 &mdash; Tentang</a>
+                <span class="nav-sep">/</span>
+                <a href="#section-ulasan" class="nav-link hover-target">02 &mdash; Ulasan</a>
+                <span class="nav-sep">/</span>
+                <a href="#horizontal-wrapper" class="nav-link hover-target">03 &mdash; Keunggulan</a>
+                <span class="nav-sep">/</span>
+                <a href="#section-panduan" class="nav-link hover-target">04 &mdash; Panduan</a>
+                <span class="nav-sep">//</span>
+            </div>
             <div class="nav-info hover-target" style="text-align: left;">
                 STATUS: ONLINE<br>
                 <span style="color: var(--accent-color);">MDN (HQ)</span> / JKT / SBY<br>
@@ -1260,7 +1789,7 @@
             </div>
         </nav>
 
-        <section class="hero">
+        <section class="hero" id="hero">
             <div class="floating-badge">
                 <svg viewBox="0 0 100 100">
                     <path id="curve" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
@@ -1271,10 +1800,16 @@
             </div>
             <img src="object.png" class="hero-img-raw" alt="Raw vegetables">
             <div>
-                <h1 class="hero-title">Raw.<br><span class="offset"><i>Unfiltered.</i></span>Taste.</h1>
+                <div class="hero-eyebrow">
+                    <span class="pillar healthy"><i class="fa-solid fa-heart-pulse"></i>Healthy Meals</span>
+                    <span class="sep">/</span>
+                    <span class="pillar personalized"><i class="fa-solid fa-sliders"></i>Personalized Experience</span>
+                    <span class="sep">/</span>
+                    <span class="pillar eco"><i class="fa-solid fa-leaf"></i>Eco-Friendly Lifestyle</span>
+                </div>
+                <h1 class="hero-title">NOT<br><span class="offset"><i>YOUR TYPICAL</i></span>CATERING</h1>
                 <div class="hero-actions">
-                    <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Susun Piringmu</button>
-                    <span style="font-family: var(--font-mono); font-size: 0.9rem;">+ AI NUTRITION ASSIST</span>
+                    <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Rancang Menumu</button>
                 </div>
             </div>
         </section>
@@ -1288,16 +1823,16 @@
             </div>
         </section>
 
-        <section class="about-section">
-            Bukan makanan kelinci. <i>Kami mengubah cara generasi ini makan.</i> Membunuh stereotip bahwa makanan sehat
-            itu hambar. Kami meretas sistem pertanian lokal untuk menyajikan rasa absolut dengan jejak karbon nol.
-            <i>Sadar. Liar. Otentik.</i>
+        <section class="about-section" id="section-tentang">
+            <span class="about-tag">// 01 &mdash; Tentang Kami</span>
+            <p class="about-lead">Kami percaya bahwa makanan sehat tidak harus rumit.</p>
+            <p class="about-body">Kepedulian terhadap lingkungan tidak harus menjadi pilihan yang sulit. Melalui <strong class="hl-personalized">personalisasi menu</strong>, teknologi, dan praktik yang lebih <strong class="hl-eco">berkelanjutan</strong>, kami menghadirkan pengalaman katering yang lebih <strong class="hl-healthy">sehat</strong>, praktis, dan ramah lingkungan bagi semua orang.</p>
         </section>
 
         <div id="dark-mode-trigger">
-            <section class="fav-section">
+            <section class="fav-section" id="section-ulasan">
                 <div class="fav-left">
-                    <span class="fav-label">// PALING DISUKAI & PENDAPAT MEREKA</span>
+                    <span class="fav-label">// 02 &mdash; Menu Favorit & Ulasan</span>
                     <h2 class="fav-food-name" id="fav-food">Charred Aubergine</h2>
                     <p class="fav-quote" id="fav-quote">"Gila sih, terong bisa berasa kayak steak premium. Bumbunya
                         meresap sampai ke serat terdalam. PureBite beneran meretas cara kita makan sehat!"</p>
@@ -1307,13 +1842,13 @@
                 <div class="fav-right">
                     <div class="card-stack" id="card-stack">
                         <div class="stack-card hover-target"
-                            style="background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop');">
+                            style="background-image: url('pak_asep.png');">
                         </div>
                         <div class="stack-card hover-target"
-                            style="background-image: url('https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=800&auto=format&fit=crop');">
+                            style="background-image: url('genz.png');">
                         </div>
                         <div class="stack-card hover-target"
-                            style="background-image: url('https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?q=80&w=800&auto=format&fit=crop');">
+                            style="background-image: url('sam.png');">
                         </div>
                     </div>
                 </div>
@@ -1322,57 +1857,177 @@
 
         <div class="horizontal-container" id="horizontal-wrapper">
             <div class="sticky-wrapper">
+                <div class="benefits-header">
+                    <span class="hiw-eyebrow" style="display:block; margin-bottom: 1rem;">// 03 &mdash; Keunggulan</span>
+                    <h2>MENGAPA PureBite?</h2>
+                    <p>Menu sehat yang dipersonalisasi untuk gaya hidupmu, dikirim dengan komitmen penuh terhadap keberlanjutan.</p>
+                </div>
                 <div class="h-scroll-inner" id="h-scroll-inner">
-                    <div class="h-card">
+                    <div class="h-card pillar-healthy">
+                        <span class="pillar-kicker"><i class="fa-solid fa-heart-pulse"></i> Healthy Meals</span>
                         <span class="step-num">MANFAAT 01</span>
-                        <h3>Real-Time Macros</h3>
-                        <p>Kalkulator nutrisi absolut. Atur protein, lemak, dan karbohidrat sesuai target harianmu
-                            langsung di layar.</p>
+                        <h3>Menu Sehat & Bergizi Seimbang</h3>
+                        <p>Menu dirancang berdasarkan prinsip gizi seimbang sebagai konsep katering sehat untuk membantu memenuhi kebutuhan nutrisi harian. Nikmati variasi menu baru yang selalu diperbarui setiap hari Senin!</p>
                     </div>
-                    <div class="h-card">
+                    <div class="h-card pillar-personalized">
+                        <span class="pillar-kicker"><i class="fa-solid fa-sliders"></i> Personalized Experience</span>
                         <span class="step-num">MANFAAT 02</span>
-                        <h3>Eco-Guilt Score</h3>
-                        <p>Setiap menu memiliki skor jejak karbon. Makan enak tanpa merasa bersalah pada bumi. 100%
-                            kemasan kompos.</p>
+                        <h3>Perencana Menu dengan AI</h3>
+                        <p>Dapatkan rekomendasi menu berdasarkan budget, target nutrisi, alergi, makanan favorit, dan makanan yang tidak disukai sehingga proses memilih menu menjadi lebih cepat dan personal.</p>
                     </div>
-                    <div class="h-card">
+                    <div class="h-card pillar-eco">
+                        <span class="pillar-kicker"><i class="fa-solid fa-leaf"></i> Eco-Friendly Lifestyle</span>
                         <span class="step-num">MANFAAT 03</span>
-                        <h3>AI Assistant</h3>
-                        <p>Cukup ketik tujuan dietmu (cth: "Tinggi protein, rendah gula"), AI kami akan menyusun piring
-                            yang sempurna dalam sedetik.</p>
+                        <h3>Kemasan Ramah Lingkungan</h3>
+                        <p>Menggunakan kemasan berbahan sugarcane bagasse (serat tebu) sebagai alternatif yang membantu mengurangi penggunaan plastik sekali pakai.</p>
+                    </div>
+                    <div class="h-card pillar-eco">
+                        <span class="pillar-kicker"><i class="fa-solid fa-bolt"></i> Eco-Friendly Lifestyle</span>
+                        <span class="step-num">MANFAAT 04</span>
+                        <h3>Gratis Ongkir, Minim Emisi Karbon</h3>
+                        <p>Nikmati gratis ongkos kirim dengan konsep pengiriman menggunakan kendaraan listrik sebagai bagian dari komitmen terhadap keberlanjutan dan pengurangan emisi karbon.</p>
+                    </div>
+                    <div class="h-card pillar-personalized">
+                        <span class="pillar-kicker"><i class="fa-solid fa-rotate"></i> Personalized Experience</span>
+                        <span class="step-num">MANFAAT 05</span>
+                        <h3>Langganan yang Fleksibel</h3>
+                        <p>Pilih pembelian satu kali, langganan mingguan, atau bulanan dengan menu yang dipersonalisasi agar lebih praktis dan sesuai kebutuhan.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <section class="how-it-works">
-            <div class="section-header">Panduan Memesan</div>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <span class="step-num">STEP 01.</span>
-                    <h3>Pilih Komitmen</h3>
-                    <p>Tentukan apakah Kamu ingin mencoba satu kali untuk keesokan harinya, atau langsung berlangganan
-                        rutinitas mingguan.</p>
+        <section class="how-it-works" id="section-panduan">
+
+            <!-- Stacked header -->
+            <div class="hiw-header-grid">
+                <span class="hiw-eyebrow">// 04 — Panduan</span>
+                <div class="section-header">Cara Pemesanan</div>
+                <div class="hiw-subtitle-block">
+                    <p class="how-it-works-subtitle">Pilih jenis pemesanan yang sesuai, lalu ikuti langkah-langkah berikut hingga pesanan berhasil dibuat.</p>
+                    <div class="hiw-method-count">2 Metode Tersedia</div>
                 </div>
-                <div class="step-card">
-                    <span class="step-num">STEP 02.</span>
-                    <h3>Kurasi Makananmu</h3>
-                    <p>Masuk ke Interactive Plate Builder. Pilih manual lauk favoritmu, atau biarkan sistem AI kami
-                        mengatur makronutrisi Kami.</p>
+            </div>
+
+            <div class="accordion-list">
+
+                <!-- Accordion 1: Satu Kali -->
+                <div class="accordion-item" id="acc-hiw-1">
+                    <button class="accordion-trigger hover-target" onclick="toggleAccordionHIW('acc-hiw-1')">
+                        <div class="accordion-trigger-left">
+                            <span class="hiw-acc-index">01</span>
+                            <div class="hiw-acc-content">
+                                <span class="hiw-acc-label">📦 Pembelian Langsung</span>
+                                <span class="accordion-title">Satu Kali</span>
+                            </div>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <div class="steps-list">
+                                <div class="order-step">
+                                    <div class="step-badge">01</div>
+                                    <div class="step-content">
+                                        <h4>Pilih Jenis Pemesanan</h4>
+                                        <p>Pilih <strong>Satu Kali</strong> untuk pembelian instan tanpa komitmen.</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">02</div>
+                                    <div class="step-content">
+                                        <h4>Pilih Frekuensi Asupan</h4>
+                                        <p>Pilih <strong>Paket Siang</strong> atau <strong>Paket Penuh</strong> (siang + malam).</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">03</div>
+                                    <div class="step-content">
+                                        <h4>Susun Menu Bento</h4>
+                                        <p>Pilih menu manual via <strong>Builder</strong>, ambil <strong>Paket Rekomendasi Ahli</strong>, atau biarkan <strong>AI Meal Planner</strong> bekerja untukmu.</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">04</div>
+                                    <div class="step-content">
+                                        <h4>Isi Alamat Pengiriman</h4>
+                                        <p>Masukkan kode area dan alamat penerima untuk verifikasi zona pengiriman.</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">05</div>
+                                    <div class="step-content">
+                                        <h4>Konfirmasi Pembayaran</h4>
+                                        <p>Tinjau pesanan, pilih metode pembayaran, lalu selesaikan transaksi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="step-card">
-                    <span class="step-num">STEP 03.</span>
-                    <h3>Verifikasi & Tunggu</h3>
-                    <p>Masukkan alamat pengiriman, bayar dengan sistem digital (QRIS/Transfer), dan asupan Anda tiba
-                        tanpa sampah plastik.</p>
+
+                <!-- Accordion 2: Langganan -->
+                <div class="accordion-item" id="acc-hiw-2">
+                    <button class="accordion-trigger hover-target" onclick="toggleAccordionHIW('acc-hiw-2')">
+                        <div class="accordion-trigger-left">
+                            <span class="hiw-acc-index">02</span>
+                            <div class="hiw-acc-content">
+                                <span class="hiw-acc-label">📅 Berulang — Hemat s/d 15%</span>
+                                <span class="accordion-title">Langganan</span>
+                            </div>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <div class="steps-list">
+                                <div class="order-step">
+                                    <div class="step-badge">01</div>
+                                    <div class="step-content">
+                                        <h4>Pilih Jenis Langganan</h4>
+                                        <p>Pilih <strong>Langganan Mingguan</strong> (hemat 5%) atau <strong>Langganan Bulanan</strong> (hemat 15%).</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">02</div>
+                                    <div class="step-content">
+                                        <h4>Pilih Frekuensi Asupan</h4>
+                                        <p>Pilih <strong>Paket Siang</strong> atau <strong>Paket Penuh</strong> (siang + malam).</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">03</div>
+                                    <div class="step-content">
+                                        <h4>Isi AI Meal Personalized</h4>
+                                        <p>Lengkapi preferensi: budget, target nutrisi, alergi, makanan favorit, dan pantangan. Sistem menyusun menu secara otomatis.</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">04</div>
+                                    <div class="step-content">
+                                        <h4>Tinjau Rekomendasi Menu</h4>
+                                        <p>Cek hasil rekomendasi untuk hari pertama — menu hari berikutnya dikirim langsung ke <strong>email</strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="order-step">
+                                    <div class="step-badge">05</div>
+                                    <div class="step-content">
+                                        <h4>Isi Alamat & Pembayaran</h4>
+                                        <p>Lengkapi alamat, tinjau diskon langganan, pilih metode pembayaran, lalu selesaikan transaksi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </section>
 
         <footer>
             <div class="footer-main-content">
-                <div class="footer-big">Waktunya<br>Makan Benar.</div>
-                <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Mulai Susun Piring
+                <div class="footer-big">Saatnya<br>Makan Lebih Baik</div>
+                <button class="btn-brutalist hover-target" onclick="flowState.openModal()">Mulai Rancang Menu
                     Anda</button>
 
                 <div class="footer-locations"
@@ -1381,7 +2036,7 @@
                         style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
                         <div
                             style="color: var(--accent-color); font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">
-                            [ NODE 01 / HQ ]</div>
+                            [ Pusat — 01 ]</div>
                         <div style="font-size: 1.2rem; font-weight: 800;">MEDAN</div>
                         <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;"><i
                                 class="fa-solid fa-satellite-dish"></i> LAT 3.5952° N</div>
@@ -1389,7 +2044,7 @@
 
                     <div class="hover-target"
                         style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
-                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ NODE 02 ]</div>
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ Cabang — 02 ]</div>
                         <div style="font-size: 1.2rem; font-weight: 800;">JAKARTA</div>
                         <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;">LAT 6.2088°
                             S</div>
@@ -1397,7 +2052,7 @@
 
                     <div class="hover-target"
                         style="flex: 1; min-width: 200px; border: 1px dashed var(--text-primary); padding: 1.5rem 1rem; text-align: center; font-family: var(--font-mono); text-transform: uppercase;">
-                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ NODE 03 ]</div>
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem;">[ Cabang — 03 ]</div>
                         <div style="font-size: 1.2rem; font-weight: 800;">SURABAYA</div>
                         <div style="opacity: 0.5; font-size: 0.7rem; margin-top: 10px; letter-spacing: 1px;">LAT 7.2504°
                             S</div>
@@ -1408,7 +2063,7 @@
                     style="margin-top: 1.5rem; border-top: 1px dashed rgba(150, 150, 150, 0.3); padding-top: 1.5rem; width: 100%; max-width: 800px; text-align: center; font-family: var(--font-mono); font-size: 0.85rem; text-transform: uppercase;">
                     <span style="opacity: 0.8;">
                         <i class="fa-solid fa-tower-broadcast" style="margin-right: 5px;"></i> RADIUS PENGIRIMAN MAKS.
-                        25KM DARI MASING-MASING NODE.
+                        25KM DARI MASING-MASING LOKASI.
                     </span><br>
                     <span
                         style="color: var(--accent-color); font-weight: 700; display: inline-block; margin-top: 0.5rem; letter-spacing: 1px;">
@@ -1418,7 +2073,7 @@
             </div>
 
             <div class="footer-bottom">
-                <div class="footer-copyright" style="text-align: left;">© 2026 PureBite Catering.</div>
+                <div class="footer-copyright" style="text-align: left;">© 2026 PureBite Catering. <i class="fa-solid fa-leaf" style="color: var(--accent-eco); margin-left: 4px;"></i></div>
                 <div class="footer-socials" style="justify-content: center; gap: 2.5rem;">
                     <a href="mailto:hello@purebite.com" class="hover-target"><i class="fa-regular fa-envelope"
                             style="margin-right: 6px;"></i> HELLO@PUREBITE.COM</a>
@@ -1594,7 +2249,7 @@
             <div style="margin-top: 3rem;">
                 <button class="btn-brutalist hover-target" 
                     style="background: var(--accent-color); border-color: var(--accent-color); color: white;"
-                    onclick="flowState.startBuilder()">Lanjut Susun Piring Hari Pertama</button>
+                    onclick="flowState.startBuilder()">Lanjut Rancang Menu Hari Pertama</button>
             </div>
         </div>
     </div>
@@ -1620,8 +2275,9 @@
                 </div>
 
                 <div
-                    style="font-family: var(--font-mono); font-size: 0.7rem; margin-bottom: 0.5rem; opacity: 0.6; text-transform: uppercase;">
+                    style="font-family: var(--font-mono); font-size: 0.7rem; margin-bottom: 0.6rem; opacity: 0.6; text-transform: uppercase;">
                     Real-time Tray Preview</div>
+                <span class="eco-tag" style="margin-bottom: 1rem;"><i class="fa-solid fa-leaf"></i>Sugarcane Bagasse • Zero Plastic</span>
                 <!-- VISUAL BENTO PREVIEW -->
                 <div class="bento-preview-area" style="margin-bottom: 2rem; width: 100%; aspect-ratio: 16/9;">
                     <div id="preview-layer-carb" class="preview-layer"></div>
@@ -1630,10 +2286,6 @@
                     <div id="preview-layer-extra" class="preview-layer"></div>
                 </div>
 
-                <div class="ai-prompt-box">
-                    <input type="text" id="ai-input" placeholder="Ketik: 'Menu diet rendah gula dan tinggi protein...'"
-                        class="hover-target">
-                </div>
             </div>
             <div class="tray-grid" id="tray-container">
                 <div class="tray-slot" id="slot-carb" data-type="carb">[ KARBOHIDRAT ]</div>
@@ -1642,14 +2294,14 @@
                 <div class="tray-slot" id="slot-extra" data-type="extra">[ EKSTRA ]</div>
             </div>
             <div>
-                <div id="co2-reward" class="d-none" style="font-family: var(--font-mono); font-size: 0.7rem; color: #4CAF50; margin-bottom: 0.5rem; text-align: center; font-weight: 700;">
-                    ✦ PILIHAN BIJAK! JEJAK KARBON PIRINGMU SANGAT RENDAH.
+                <div id="co2-reward" class="d-none" style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-eco); margin-bottom: 0.5rem; text-align: center; font-weight: 700;">
+                    ✦ TERIMA KASIH TELAH BERKONTRIBUSI UNTUK BUMI! JEJAK KARBON PIRINGMU SANGAT RENDAH.
                 </div>
                 <div class="stats-bar" style="flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem; padding-bottom: 1rem;">
                     <div style="flex: 1 1 45%;">P: <span id="stat-protein">0</span>g</div>
                     <div style="flex: 1 1 45%;">F: <span id="stat-fat">0</span>g</div>
                     <div style="flex: 1 1 45%;">C: <span id="stat-carb">0</span>g</div>
-                    <div style="flex: 1 1 45%; color: var(--accent-color);">CO2: <span id="stat-co2">0</span>kg (<span id="stat-co2-score">-</span>)</div>
+                    <div style="flex: 1 1 45%; color: var(--accent-eco);">CO2: <span id="stat-co2">0</span>kg (<span id="stat-co2-score">-</span>)</div>
                 </div>
                 <div class="stats-bar"><span>KALORI: <span id="stat-cals">0</span> Kcal</span><span>TOTAL: Rp<span
                             id="stat-price">0</span></span></div>
@@ -1692,8 +2344,8 @@
                                     onchange="builder.applyFilters()"> Vegan</label>
                             <label><input type="checkbox" class="food-filter" value="Vegetarian"
                                     onchange="builder.applyFilters()"> Vegetarian</label>
-                            <label><input type="checkbox" class="food-filter" value="High Protein"
-                                    onchange="builder.applyFilters()"> High Protein</label>
+                            <label><input type="checkbox" class="food-filter" value="Protein Tinggi"
+                                    onchange="builder.applyFilters()"> Protein Tinggi</label>
                             <label><input type="checkbox" class="food-filter" value="Rendah Kalori"
                                     onchange="builder.applyFilters()"> Rendah Kalori</label>
                             <label><input type="checkbox" class="food-filter" value="Pedas"
@@ -1781,9 +2433,9 @@
                         <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
                             Rasa autentik rempah pilihan Indonesia.</p>
                     </div>
-                    <div class="choice-card hover-target" onclick="builder.applyExpert('High Protein')"
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Tinggi Protein')"
                         style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
-                        <h3>High Protein</h3>
+                        <h3>Protein Tinggi</h3>
                         <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
                             Fokus pada pembentukan massa otot.</p>
                     </div>
@@ -1799,9 +2451,9 @@
                         <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
                             Penuh gizi dari sumber nabati pilihan.</p>
                     </div>
-                    <div class="choice-card hover-target" onclick="builder.applyExpert('Balanced Nutrition')"
+                    <div class="choice-card hover-target" onclick="builder.applyExpert('Nutrisi Seimbang')"
                         style="padding: 2rem; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;">
-                        <h3>Balanced Nutrition</h3>
+                        <h3>Nutrisi Seimbang</h3>
                         <p style="font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">
                             Komposisi seimbang untuk energi harian.</p>
                     </div>
@@ -1818,7 +2470,7 @@
             style="position: absolute; top: 40px; left: 40px; padding: 0.5rem 1rem; font-size: 0.9rem; border-color: var(--bg-primary); color: var(--bg-primary);"
             onclick="flowState.backFromCheckout()">← KEMBALI KE PENYUSUNAN</button>
         <div class="checkout-box" id="checkout-step-1">
-            <div class="receipt-header">Verifikasi Area</div>
+            <div class="receipt-header">Mau Dikirim ke Mana?</div>
             <div style="margin-bottom: 2rem;">
                 <label style="display: block; font-size: 0.8rem; margin-bottom: 0.5rem; opacity: 0.8;">KODEPOS / KECAMATAN:</label>
                 <input type="text" class="input-brutal hover-target" placeholder="Contoh: 12190" id="zip-input">
@@ -1839,8 +2491,8 @@
                 <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.5rem;">
                     <span>Nutrisi Total:</span> <span id="receipt-macros">P: 0g | F: 0g | C: 0g | CO2: 0kg</span>
                 </div>
-                <div id="receipt-co2-reward" class="d-none" style="font-size: 0.7rem; color: #ff9d85; margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 0.5rem; font-weight: 700;">
-                    ✦ PILIHAN BIJAK! JEJAK KARBON PIRINGMU SANGAT RENDAH.
+                <div id="receipt-co2-reward" class="d-none" style="font-size: 0.7rem; color: var(--accent-eco); margin-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 0.5rem; font-weight: 700;">
+                    ✦ TERIMAKASIH TELAH BERKONTRIBUSI UNTUK BUMI! JEJAK KARBON PIRINGMU SANGAT RENDAH.
                 </div>
                 
                 <div style="border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 1rem;">
@@ -1880,6 +2532,7 @@
                 <div class="meta-row"><span>STATUS DAPUR</span> <span>MEMPERSIAPKAN...</span></div>
                 <div class="meta-note">STRUK DIGITAL TELAH DIKIRIM KE EMAIL ANDA.</div>
             </div>
+            <div class="success-eco-note"><i class="fa-solid fa-leaf"></i>Dikemas & dikirim dengan jejak karbon rendah.</div>
             <button class="btn-brutalist hover-target" style="width: 100%; font-size: 1.2rem;"
                 onclick="flowState.returnToHome()">Kembali ke Beranda</button>
         </div>
@@ -1920,6 +2573,13 @@
         }
         attachHoverEvents();
 
+        function toggleAccordionHIW(id) {
+            const clicked = document.getElementById(id);
+            const isOpen = clicked.classList.contains('open');
+            document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+            if (!isOpen) clicked.classList.add('open');
+        }
+
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('mouseenter', (e) => {
                 revealImg.style.backgroundImage = `url(${e.target.getAttribute('data-img')})`;
@@ -1940,7 +2600,9 @@
 
             if (scrollDistance >= 0 && scrollDistance <= wrapperHeight) {
                 let progress = scrollDistance / wrapperHeight;
-                hInner.style.transform = `translateX(-${progress * 110}vw)`;
+                // Responsive scroll distance: 5 cards on mobile (80vw each) need ~320vw to show all.
+                const moveDistance = window.innerWidth < 768 ? 320 : 110;
+                hInner.style.transform = `translateX(-${progress * moveDistance}vw)`;
             }
         });
 
@@ -1956,25 +2618,25 @@
 
         // 4. DATA KATALOG MENU (BUILDER)
         const database = [
-            { id: 'c1', type: 'carb', name: 'Nasi Merah', cal: 150, protein: 4, fat: 1, carb: 33, co2: 0.5, price: 15000, tags: ['High Protein', 'Rendah Kalori', 'Nusantara'], img: 'https://placehold.co/600x400/orange/white?text=Nasi+Merah' },
+            { id: 'c1', type: 'carb', name: 'Nasi Merah', cal: 150, protein: 4, fat: 1, carb: 33, co2: 0.5, price: 15000, tags: ['Protein Tinggi', 'Rendah Kalori', 'Nusantara'], img: 'https://placehold.co/600x400/orange/white?text=Nasi+Merah' },
             { id: 'c2', type: 'carb', name: 'Ubi Panggang', cal: 120, protein: 2, fat: 0, carb: 28, co2: 0.3, price: 18000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/brown/white?text=Ubi' },
-            { id: 'p1', type: 'protein', name: 'Ayam Sambal', cal: 250, protein: 25, fat: 15, carb: 5, co2: 1.2, price: 35000, tags: ['High Protein', 'Pedas', 'Nusantara'], img: 'https://placehold.co/600x400/red/white?text=Ayam+Sambal' },
-            { id: 'p2', type: 'protein', name: 'Ayam Teriyaki', cal: 230, protein: 24, fat: 10, carb: 12, co2: 1.1, price: 35000, tags: ['High Protein', 'Non Pedas'], img: 'https://placehold.co/600x400/darkred/white?text=Ayam+Teriyaki' },
-            { id: 'p3', type: 'protein', name: 'Ikan Dori', cal: 200, protein: 20, fat: 8, carb: 0, co2: 0.9, price: 40000, tags: ['High Protein', 'Non Pedas'], img: 'https://placehold.co/600x400/lightblue/black?text=Ikan+Dori' },
+            { id: 'p1', type: 'protein', name: 'Ayam Sambal', cal: 250, protein: 25, fat: 15, carb: 5, co2: 1.2, price: 35000, tags: ['Protein Tinggi', 'Pedas', 'Nusantara'], img: 'https://placehold.co/600x400/red/white?text=Ayam+Sambal' },
+            { id: 'p2', type: 'protein', name: 'Ayam Teriyaki', cal: 230, protein: 24, fat: 10, carb: 12, co2: 1.1, price: 35000, tags: ['Protein Tinggi', 'Non Pedas'], img: 'https://placehold.co/600x400/darkred/white?text=Ayam+Teriyaki' },
+            { id: 'p3', type: 'protein', name: 'Ikan Dori', cal: 200, protein: 20, fat: 8, carb: 0, co2: 0.9, price: 40000, tags: ['Protein Tinggi', 'Non Pedas'], img: 'https://placehold.co/600x400/lightblue/black?text=Ikan+Dori' },
             { id: 'p4', type: 'protein', name: 'Tempe', cal: 180, protein: 18, fat: 9, carb: 10, co2: 0.4, price: 20000, tags: ['Vegan', 'Vegetarian', 'Nusantara'], img: 'https://placehold.co/600x400/gold/black?text=Tempe' },
             { id: 'p5', type: 'extra', name: 'Tahu', cal: 160, protein: 16, fat: 8, carb: 5, co2: 0.4, price: 20000, tags: ['Vegan', 'Vegetarian', 'Nusantara'], img: 'https://placehold.co/600x400/lightyellow/black?text=Tahu' },
             { id: 'v1', type: 'veg', name: 'Brokoli', cal: 50, protein: 3, fat: 0, carb: 10, co2: 0.2, price: 15000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/green/white?text=Brokoli' },
             { id: 'v2', type: 'veg', name: 'Wortel', cal: 40, protein: 1, fat: 0, carb: 9, co2: 0.2, price: 15000, tags: ['Vegan', 'Vegetarian', 'Rendah Kalori'], img: 'https://placehold.co/600x400/orange/black?text=Wortel' },
-            { id: 'e1', type: 'extra', name: 'Telur', cal: 70, protein: 6, fat: 5, carb: 1, co2: 0.6, price: 12000, tags: ['High Protein', 'Vegetarian'], img: 'https://placehold.co/600x400/white/black?text=Telur' },
+            { id: 'e1', type: 'extra', name: 'Telur', cal: 70, protein: 6, fat: 5, carb: 1, co2: 0.6, price: 12000, tags: ['Protein Tinggi', 'Vegetarian'], img: 'https://placehold.co/600x400/white/black?text=Telur' },
             { id: 'e2', type: 'extra', name: 'Saus Pesto', cal: 90, protein: 2, fat: 8, carb: 3, co2: 0.4, price: 10000, tags: ['Vegan', 'Vegetarian'], img: 'https://placehold.co/600x400/darkgreen/white?text=Pesto' }
         ];
 
         const expertRecommendations = {
             'Nusantara': ['c1', 'p1', 'v2', 'p4'],
-            'High Protein': ['c1', 'p2', 'v1', 'e1'],
+            'Protein Tinggi': ['c1', 'p2', 'v1', 'e1'],
             'Diet Langsing': ['c2', 'p3', 'v1', 'e1'],
             'Vegetarian': ['c1', 'p4', 'v1', 'p5'],
-            'Balanced Nutrition': ['c1', 'p3', 'v2', 'e1']
+            'Nutrisi Seimbang': ['c1', 'p3', 'v2', 'e1']
         };
 
         // 5. BUILDER LOGIC
@@ -2189,8 +2851,8 @@
 
                             // Protein Rule
                             if (proteinTarget > 50) {
-                                if (a.tags.includes('High Protein')) scoreA += 15;
-                                if (b.tags.includes('High Protein')) scoreB += 15;
+                                if (a.tags.includes('Protein Tinggi')) scoreA += 15;
+                                if (b.tags.includes('Protein Tinggi')) scoreB += 15;
                             }
 
                             // Calories Rule
@@ -2530,19 +3192,19 @@
 
         const favData = [
             {
-                name: "Charred Aubergine",
-                quote: '"Gila sih, terong bisa berasa kayak steak premium. Bumbunya meresap sampai ke serat terdalam. PureBite beneran meretas cara kita makan sehat!"',
-                author: "- Asep, Jakarta"
+                name: "Kombinasi Ayam Panggang & Sayuran Segar",
+                quote: '"Mantap sekali ayam panggang + sayur seger nya,, porsi pas bumbu meresap 👍👍 Istri juga suka karena PureBite ini ramah lingkungan & sehat alami. Sukses terus PureBite,,, besok order lagi 🙏"',
+                author: "@asep_hermawan68, Medan"
             },
             {
-                name: "Smoked Beetroot Tartare",
-                quote: '"Warna dan teksturnya dapet banget. Gak nyangka buah bit bisa se-smokey dan se-fresh ini. Menu wajib kalau lagi pengen asupan bersih tapi tetep nagih."',
-                author: "- Nia, Batam"
+                name: "Pilihan Ikan Bernutrisi",
+                quote: '"gilaaa pilihan ikan bernutrisi-nya enak bgt ga amis smsek woi!! 😭🫶🏻 super luv sm PureBite yg eco-friendly & sehat pol. kemasannya jg ramah lingkungan. fix jd langganan, worth it parahh ✨"',
+                author: "@pcy_nctzen_03, Jakarta"
             },
             {
-                name: "Oyster Mushroom Steak",
-                quote: '"Juicy banget! Teksturnya meaty dan sausnya bener-bener brutal enaknya. Earthy, bold, stand out banget dibanding katering sehat hambar konvensional."',
-                author: "- Budi, Medan"
+                name: "Menu Vegetarian Seimbang",
+                quote: '"Menu vegetarian seimbangnya solid. Rasa pas, porsi seimbang, gak hambar. Salut sama PureBite yang tetep komit ramah lingkungan dan fokus ke kesehatan tanpa ngorbanin rasa. Recommended."',
+                author: "@samuel_collin, Surabaya"
             }
         ];
 
